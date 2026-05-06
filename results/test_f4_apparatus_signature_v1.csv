@@ -1,0 +1,6 @@
+channel,L_chan,n_per_channel,epsilon,I_struct_pop_total_L64,I_struct_pop_per_codon,I_struct_chan_focal,mechanism_fidelity_per_codon,kl_to_mixture,kl_to_mode2_standard
+_SUMMARY_,2,8000,0.0001,269.6739107112963,4.2136548548640045,0.5140966408394116,0.99988125,,
+Mode1_DNA,2,8000,0.0001,,,,,1.9001328389881582,5.531050363029458
+Mode2_standard,2,8000,0.0001,,,,,0.5140966408394116,0.0
+Mode2_swapped,2,8000,0.0001,,,,,0.5737779207695062,0.741083489269588
+AbiK_uniform,2,8000,0.0001,,,,,0.3997999192210932,0.5717738319691984

@@ -1,0 +1,4 @@
+n_m1_init,n_m4_init,n_replicates,p_m4_wins,p_m1_wins,mean_final_freq_m4,std_final_freq_m4,mean_final_freq_m1,std_final_freq_m1,mean_final_mean_fit_m4,std_final_mean_fit_m4,mean_final_mean_fit_m1,std_final_mean_fit_m1,median_crossover_gen,median_gen_m4_reaches_95freq
+20,380,30,1.0,0.0,1.0,0.0,0.0,0.0,0.9725885416666669,0.0020809947812317742,nan,nan,0,0
+80,320,30,1.0,0.0,1.0,0.0,0.0,0.0,0.9723489583333333,0.0024456106159244325,nan,nan,0,7
+200,200,30,0.8,0.2,0.9333333333333333,0.24944382578492943,0.06666666666666667,0.24944382578492943,0.9728069196428571,0.0025911071083832443,0.501953125,0.015312499999999979,2,11

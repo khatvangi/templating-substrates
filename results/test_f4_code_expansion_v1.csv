@@ -1,0 +1,4 @@
+code,L,epsilon,n_samples,H_Y_per_codon,H_Y_closed_form,alphabet_size,ratio_empirical_24_over_20,ratio_closed_form_24_over_20,ratio_naive_log24_log20
+standard_21,64,0.0001,5000,4.216142781586681,4.218139062229566,21,,,
+expanded_24,64,0.0001,5000,4.401132221379395,4.400957868318166,24,,,
+_RATIOS_,64,0.0001,5000,,,,1.0438764646682805,1.0433411045466974,1.060860430821362
