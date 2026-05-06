@@ -20,6 +20,24 @@ launch_h*.sh
 results/test_*_progress/
 results/test_*_smoke/
 results/*_pid.txt
+# nohup logs and progress files (recover_results.py keeps test_b_stdout.log specifically)
+results/test_*_progress.txt
+results/test_*_stderr.log
+results/test_a*_stdout.log
+results/test_c*_stdout.log
+results/test_d*_stdout.log
+results/test_e*_stdout.log
+
+# smoke-test figure leftovers
+figures/test_*_smoke_*.png
+
+# F3 stdout (test was foreground; log not load-bearing)
+results/test_f*_stdout.log
+results/test_g*_stdout.log
+results/test_h*_stdout.log
+
+# H4 smoke test artifacts (CSVs from --smoke-test runs, not canonical)
+results/test_*_smoke_*.csv
 
 # python
 __pycache__/
