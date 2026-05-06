@@ -1,0 +1,41 @@
+# third-party data — Sharma et al. 2026 Science supp materials
+# (download from DOI 10.1126/science.aed1656 — see data/README.md)
+science.aed1656_data_s1_to_s8 deng/
+
+# raw dispatch artifacts (session-level orchestration files, not part of the method)
+dispatches_v3/
+dispatches_v4/
+dispatch1.md
+dispatch2.md
+dispatch3.md
+dispatch_*.md
+dispatch_*.zip
+dispates.zip
+templet-6-dispacethes.zip
+orchestration_*.md
+sciscape_*.md
+
+# background-process scaffolding (specific to Boron compute environment)
+launch_h*.sh
+results/test_*_progress/
+results/test_*_smoke/
+results/*_pid.txt
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# trajectory caches (regeneratable from CSVs)
+*.npz
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# editor
+*.swp
+*.swo
+.vscode/
+.idea/
