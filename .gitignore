@@ -49,3 +49,19 @@ Thumbs.db
 *.swo
 .vscode/
 .idea/
+
+# LaTeX build artifacts (regenerated from manuscript-v8.tex on each compile)
+*.aux
+*.log
+*.out
+*.toc
+*.blg
+*.bbl
+*.lof
+*.lot
+*.bcf
+*.run.xml
+*Notes.bib
+*.fls
+*.fdb_latexmk
+*.synctex.gz

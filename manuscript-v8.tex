@@ -53,25 +53,27 @@
 \newcommand{\Op}{\mathcal{O}}
 \newcommand{\liminff}{\liminf_{L\to\infty}}
 
+\begin{document}
+
 \title{A substrate recursion principle for biological information, with empirical anchoring through a templating-mode taxonomy}
 
 \author{Boggavarapu Kiran}
-\email[Corresponding author: ]{kiran@mcneese.edu}
 \affiliation{[Affiliation TBD]}
+\email{kiran@mcneese.edu}
 
-% Add co-authors here following the same pattern:
+% Add co-authors below using the same \author / \affiliation / \email
+% sequence. With superscriptaddress option, repeated affiliations get
+% auto-merged into shared address footnotes.
 % \author{Co-Author Name}
 % \affiliation{[Affiliation]}
 
 \date{\today}
 
-\begin{document}
-
-\maketitle
-
 \begin{abstract}
 We state a substrate-level principle specifying when a physical substrate-operation pair can support open-ended information-generating recursion. The principle separates four structural conditions on the substrate-operation pair --- positive entropy per recognized site, unboundedly many independently addressable non-recurrent sites, same-operation recursion (possibly up to reversible involution), and heritable local drift in the recognized alphabet --- from a fifth scope-defining condition that the operation be intrinsic physicochemistry rather than externally specified optimization. The recursion has no privileged starting configuration: every template is the drifted product of prior recursions, and the substrate-level analysis treats no configuration as canonical. The principle is structural; it constrains substrates, not populations, and the population-level phenomena standardly described as inheritance, selection, error catastrophe, and evolutionary plateau are derived as corollaries. The primary theorem proves necessity: within the scope-defined domain, any substrate-operation pair failing one of (R1)--(R4) cannot support open-ended biological information. A first corollary recovers a six-mode templating taxonomy as the empirical inventory of biological substrates that satisfy or partially satisfy the principle, with each mode's bounded-heredity behavior explained by the specific condition it fails. A second corollary states that mechanisms failing same-operation recursion or heritable local drift at the individual level are structurally capped at mechanism-specific ceilings under finite-population dynamics; mechanisms satisfying both are not structurally barred from cumulative climbing on tested fitness landscapes. We test this in pre-specified simulations spanning M0--M4 inheritance mechanisms: only individual-level copying with heritable local drift (the principle satisfied at M4) reaches near-target fitness in the tested model class, while M0--M3 plateau at ceilings consistent with their respective condition failures. A descriptor-relative diagnostic apparatus (population mutual information, channel mutual information against a stated comparison ensemble, per-base mechanism fidelity), with bulk-matched and structure-scrambled controls, operationalizes the corollaries and is validated on the Drt3 system: WT Drt3b is correctly classified as cyclic-conformational templating; the E26Q point mutant matches the framework's analytical prediction (marginal G fraction $0.10$, observed $0.1016$); AbiK same-fold non-templating is excluded; Drt3a Mode 1 is separated from Drt3b Mode 3 by 1.0 bits of channel mutual information against the stated five-channel ensemble. Family-level apparatus application across 1{,}232 Drt3b homologs confirms in-envelope behavior for 33 secondary-residue clades and a 17-fold elevation in dG misincorporation at the A-state for 6 E26$\to$D primary-gate clades, the framework-predicted shift for selectivity-gate degradation. Two distinct universal-gate classes generate single-experiment falsification targets: an architectural gate (R253) whose substitution predicts cycle-architecture collapse, and a selectivity gate (G248) whose substitution predicts intact cycle with shifted product composition.
 \end{abstract}
+
+\maketitle
 
 \section*{Popular Summary}
 
@@ -434,7 +436,7 @@ R253 substitutions: R253A, R253K, R253H. G248 substitutions: G248A, G248V, G248D
 \end{figure*}
 
 
-\begin{table}
+\begin{table*}
 \caption{\textbf{Substrate recursion principle: four structural conditions plus one scope-defining condition.}}
 \label{tab:principle}
 \begin{tabular}{p{0.05\linewidth} p{0.18\linewidth} p{0.30\linewidth} p{0.40\linewidth}}
@@ -448,10 +450,10 @@ R4 & Heritable local drift in recognized alphabet & Drift lies in the recognitio
 R5 & Scope: non-teleological intrinsic operation & Operation is intrinsic physicochemistry, not externally specified; no target, loss function, or agent within the operation. Scope-defining: demarcates domain of (R1)--(R4), does not introduce a structural condition & LLM training (non-biological): operations are externally specified by loss function; gradient updates are not substrate-intrinsic recursion. Outside scope rather than structurally failing \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 
-\begin{table}
+\begin{table*}
 \caption{\textbf{Six modes of biological templating, classified by substrate recursion principle conditions.}}
 \label{tab:modes}
 \begin{tabular}{p{0.05\linewidth} p{0.16\linewidth} p{0.18\linewidth} p{0.16\linewidth} p{0.13\linewidth} p{0.20\linewidth}}
@@ -466,10 +468,10 @@ Mode & Substrate & Conditions failed & Capacity scaling & Copyability & Examples
 6 & 2D pattern (lattice, surface, cortex) & R3 (no autonomous self-copy), R4 (no autonomous heritable drift) & R1, R2 satisfied at surface; bounded by Mode 1 dependency & Limited heredity, parasitic on Mode 1 & Quasicrystal adlayers; ciliate cortex \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 
-\begin{table}
+\begin{table*}
 \caption{\textbf{DRT family classification under the framework.}}
 \label{tab:drt_family}
 \begin{tabular}{p{0.10\linewidth} p{0.18\linewidth} p{0.50\linewidth} p{0.16\linewidth}}
@@ -487,10 +489,10 @@ DRT9 & Mode 1 & Poly-U ncRNA template, produces poly(dA) homopolymer & \citep{Mo
 DRT10 & Mode 1 & Translocation-based reuse of short ncRNA template; telomerase ancestor & \citep{DRT10preprint2025} \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 
-\begin{table}
+\begin{table*}
 \caption{\textbf{Universal-gate site-directed-mutagenesis predictions (architectural versus selectivity).} Predictions at $L = 64$, 30 reps, $n_{\mathrm{samples}} = 5000$ per rep. 95\% CIs from beta-binomial.}
 \label{tab:sdm_predictions}
 \begin{tabular}{p{0.13\linewidth} p{0.13\linewidth} p{0.18\linewidth} p{0.16\linewidth} p{0.16\linewidth} p{0.16\linewidth}}
@@ -507,10 +509,10 @@ G248D & Selectivity & 0.971 & 0.102 & 0.79 & Confirms cycle preserved \\
 R253A + G248A & Architectural-dominant & 0.0084 [0.0059, 0.0116] & 0.1519 [0.1506, 0.1537] & 0.3872 [0.3855, 0.3892] & If G248A signature dominates, architectural-versus-selectivity ordering is wrong \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 
-\begin{table}
+\begin{table*}
 \caption{\textbf{Inheritance-mechanism plateau heights (Test H3, Corollary 2).} Plateau = mean fitness at gen 1000 averaged over 30 replicates. $K = 400$, $L_{\mathrm{TARGET}} = 32$, $\mu_{M4} = 0.01$. Theoretical maximum 1.0; chance baseline 0.250. Mechanism-condition mapping in column 2.}
 \label{tab:plateau_heights}
 \begin{tabular}{l p{0.30\linewidth} c c c c}
@@ -524,7 +526,7 @@ M3 (individual exact copy) & R4 (no drift) & 0.469 & 0.504 & 0.498 & 0.485 \\
 M4 (individual + local drift) & None (R1--R4 satisfied within R5 scope) & 0.832 & 0.948 & 0.972 & 0.984 \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 
 \section*{Data Availability}
