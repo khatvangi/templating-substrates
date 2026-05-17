@@ -1,0 +1,628 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Supplementary Mathematical Appendix
+%%% A theory of templating substrates
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[round]{natbib}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{microtype}
+
+\hypersetup{colorlinks=true, allcolors=black, citecolor=blue, urlcolor=blue}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Istructpop}{I_{\mathrm{struct}}^{\mathrm{pop}}}
+\newcommand{\Istructchan}{I_{\mathrm{struct}}^{\mathrm{chan}}}
+\newcommand{\fphase}{f_{\mathrm{phase}}}
+\newcommand{\fmonomer}{f_{\mathrm{monomer}}}
+\newcommand{\Csub}{C_{\mathcal{S}}}
+\newcommand{\Hbin}{h_b}
+\newcommand{\descX}{\varphi_X}
+\newcommand{\descY}{\varphi_Y}
+\newcommand{\KL}[2]{D_{\mathrm{KL}}\!\left(#1 \,\|\, #2\right)}
+\newcommand{\Xset}{\mathcal{X}}
+\newcommand{\Op}{\mathcal{O}}
+\newcommand{\Reach}{\mathcal{R}}
+
+\title{Supplementary Mathematical Appendix\\
+\large A theory of templating substrates}
+\author{Boggavarapu Kiran et al.}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\noindent
+This appendix provides formal definitions and proofs for the mathematical claims in the main paper. The material is organized into five sections corresponding to the apparatus, mode-specific information bounds, descriptor-relativity, the formal sense of bulk-matched controls, and the capacity and generation theorems with their bounded-heredity corollary and finite-population proposition.
+
+The appendix is written for a reader with graduate-level information theory \citep{CoverThomas2006} and basic familiarity with discrete memoryless channels. Notation follows the main paper; $|\mathcal{A}|$ denotes alphabet cardinality, $\Hbin(p) = -p \log_2 p - (1-p) \log_2 (1-p)$ is binary entropy, and $\KL{P}{Q}$ is Kullback-Leibler divergence.
+
+\tableofcontents
+\bigskip
+
+\section{Formal apparatus definitions}
+
+\subsection{The templating event}
+
+A templating event is a tuple $\mathcal{E} = (X, O, S, \Delta G; \descX, \descY, Y)$ where:
+\begin{itemize}
+  \item $X \in \mathcal{X}$ is the template, drawn from a template population with distribution $\Pi_X$ (which may be a point mass $\delta_x$ for a single fixed template).
+  \item $O$ is the operator (separable molecular machinery; possibly empty if templating is autocatalytic).
+  \item $S$ is the substrate pool from which $Y$ is constructed.
+  \item $\Delta G$ is the free-energy budget driving the templating reaction.
+  \item $\descX: \mathcal{X} \to \mathcal{X}'$ and $\descY: \mathcal{Y} \to \mathcal{Y}'$ are descriptor maps on template and product spaces.
+  \item $Y$ is the structured product, distributed as $Y \mid (X, O, S, \Delta G) \sim P_{\mathrm{chan}}(\cdot \mid X)$, where $P_{\mathrm{chan}}$ is the templating channel induced by $O$ acting on $(X, S, \Delta G)$.
+\end{itemize}
+
+The templating channel $P_{\mathrm{chan}}(\cdot \mid X)$ is a stochastic kernel from $\mathcal{X}$ to $\mathcal{Y}$. When $\descX = \descY$ the templating is \emph{same-descriptor}; otherwise it is \emph{cross-descriptor} and $O$ implements the descriptor coupling.
+
+\subsection{Population mutual information}
+
+\begin{definition}[Population MI]
+For a templating event $\mathcal{E}$ with template population $\mathcal{X}$ and distribution $\Pi_X$,
+\[
+\Istructpop(\mathcal{E}) := I(\descX(X); \descY(Y)) = H(\descY(Y)) - H(\descY(Y) \mid \descX(X)),
+\]
+where the marginal $H(\descY(Y))$ is computed under the law $Y \sim \int_\mathcal{X} P_{\mathrm{chan}}(\cdot \mid x) \, d\Pi_X(x)$ and the conditional entropy is over the joint law of $(\descX(X), \descY(Y))$ induced by $\Pi_X$ and $P_{\mathrm{chan}}$.
+\end{definition}
+
+The definition is descriptor-relative: it measures information transfer between the \emph{declared descriptors} $\descX$ and $\descY$, not between raw $X$ and $\descY(Y)$. Conditioning on full $X$ would leak structure outside the declared descriptor and undermine the framework's descriptor-relativity claims (§3); the form above is consistent with the empirical estimator, which takes $(\descX(X), \descY(Y))$-paired samples and never reads $X$ outside $\descX$.
+
+\begin{proposition}[Population MI bound]
+\label{prop:pop_bound}
+$\Istructpop(\mathcal{E}) \le H(\descX(X)) \le H(\Pi_X)$.
+\end{proposition}
+
+\begin{proof}
+The first inequality is $I(\descX(X); \descY(Y)) \le H(\descX(X))$, the standard MI--entropy bound. The second is data-processing applied to $\descX$ as a deterministic post-processing of $X$: $H(\descX(X)) \le H(X) = H(\Pi_X)$.
+\end{proof}
+
+\begin{corollary}[Fixed-template degeneracy]
+\label{cor:fixed_template}
+When $\mathcal{X} = \{x_0\}$ is a single fixed template, $H(\Pi_X) = 0$, so $\Istructpop(\mathcal{E}) = 0$ by construction.
+\end{corollary}
+
+This corollary is the formal content of the framework's claim that biological systems with single fixed templates (Drt3a's single ncRNA, a single chromosome being replicated within a cell) have zero population MI. Population MI measures \emph{cross-realization information transfer}; for a fixed template, there are no realizations to transfer between.
+
+\subsection{Substrate capacity}
+
+The capacity of a templating substrate is defined as a supremum of population MI over input ensembles. Because the framework's heredity claim concerns \emph{recursive} information transfer (the product must itself be readable as a next-round template), the supremum is taken over ensembles supported on the recursively closed set:
+\[
+\mathcal{R}_L := \{X \in \mathcal{X}_L : \Op^t(X) \in \mathcal{X}_L \text{ for all } t \ge 0, \text{ possibly via the reversible involution } \iota\}.
+\]
+Restricting the supremum to $\mathcal{R}_L$ makes R3 (catalytic closure under iteration) mandatory in the capacity definition rather than argued for separately in the proof. Substrates failing R3 (e.g., translation, where the protein product is not ribosome-readable) have $\mathcal{R}_L = \emptyset$ or trivially small, so their substrate capacity is zero or bounded by a single-application transfer.
+
+\begin{definition}[Substrate capacity, recursive]
+\label{def:capacity}
+For a templating substrate class $\mathcal{S}$ and template length $L$, the substrate capacity is
+\[
+\Csub(L) := \sup_{\Pi_X \text{ on } \mathcal{R}_L} \Istructpop(\mathcal{E}).
+\]
+\end{definition}
+
+The supremum is over template-distribution choices on the recursively closed input set $\mathcal{R}_L \subseteq \mathcal{X}_L$. $\Csub$ is a property of the substrate class, not of any particular biological realization. In contrast, $\Istructpop$ is the realized population MI in a specified system. Both are needed; conflating them is the most common failure mode of substrate-level reasoning.
+
+\begin{remark}[On the choice to restrict to $\mathcal{R}_L$]
+\label{rem:recursive_restriction}
+A reader might prefer to define a separate one-step channel capacity over all of $\mathcal{X}_L$. That object is well-defined and useful for non-recursive transfers (e.g., translation), but it cannot ground a \emph{recursive} heredity claim: a substrate with $\Omega(L)$ one-step capacity but $\mathcal{R}_L = \emptyset$ transmits information one time and then exits the substrate class. Heredity, in the framework's sense, requires the iteration to remain within $(\mathcal{X}, \Op)$, and this is exactly what restricting to $\mathcal{R}_L$ encodes.
+\end{remark}
+
+\begin{remark}
+For Mode 1 (Watson-Crick) at alphabet size $|\mathcal{A}|$ and per-position misincorporation rate $\varepsilon$, $\Csub(L) = L \cdot \left[ \log_2 |\mathcal{A}| - \Hbin(\varepsilon) - \varepsilon \log_2 (|\mathcal{A}| - 1) \right]$, achieved by the uniform distribution $\Pi_X^{\mathrm{unif}}$ on $\mathcal{R}_L$ (which for Mode 1 equals $\mathcal{X}_L$ up to involution-equivalence). For Mode 3 with $N$-state cyclic dynamics, $\Csub(L) \le \log_2 N$ for all $L$, regardless of template-distribution choice (Theorem~\ref{thm:mode3}).
+\end{remark}
+
+\subsection{Channel mutual information}
+
+\begin{definition}[Channel MI against an ensemble]
+Let $\mathcal{C} = \{c_1, \ldots, c_K\}$ be a finite ensemble of templating channels with prior $P(C)$. For a focal channel $c \in \mathcal{C}$,
+\[
+\Istructchan(c; \mathcal{C}) := \KL{P(\descY(Y) \mid C = c)}{\bar{P}(\descY(Y))}
+\]
+where the mixture distribution is
+\[
+\bar{P}(\descY(Y)) := \sum_{c' \in \mathcal{C}} P(C = c') P(\descY(Y) \mid C = c').
+\]
+The full ensemble channel MI is
+\[
+\bar{I}_{\mathrm{struct}}^{\mathrm{chan}}(\mathcal{C}) := \sum_{c \in \mathcal{C}} P(C = c) \KL{P(\descY(Y) \mid C = c)}{\bar{P}}.
+\]
+\end{definition}
+
+\begin{proposition}[Channel MI bound]
+\label{prop:chan_bound}
+$\bar{I}_{\mathrm{struct}}^{\mathrm{chan}}(\mathcal{C}) \le \log_2 |\mathcal{C}|$, with equality iff the channels in $\mathcal{C}$ produce mutually disjoint output distributions.
+\end{proposition}
+
+\begin{proof}
+$\bar{I}_{\mathrm{struct}}^{\mathrm{chan}}(\mathcal{C}) = I(C; Y)$ under the joint law $P(C, Y) = P(C) P(Y \mid C)$. $H(C) \le \log_2 |\mathcal{C}|$. The mutual information is bounded by either marginal entropy. Equality of $I(C; Y)$ and $H(C)$ occurs iff $Y$ determines $C$, i.e., iff the conditional distributions $P(Y \mid C = c)$ have disjoint supports.
+\end{proof}
+
+\begin{remark}[Channel MI for fixed templates]
+Unlike $\Istructpop$, $\Istructchan$ does not vanish for fixed-template channels. A channel with a single fixed template still produces a distinguishable output distribution against alternative channels, and the divergence $\KL{P(Y \mid C = c)}{\bar{P}}$ measures that distinguishability. This is the formal content of the framework's claim that $\Istructchan$ distinguishes Drt3a (Mode 1 with fixed ncRNA template) from Drt3b (Mode 3 with cyclic active site) even when both are individual cellular realizations with fixed mechanisms.
+\end{remark}
+
+\subsection{Per-base mechanism fidelity}
+
+\begin{definition}[Phase fidelity and monomer fidelity]
+For a templating channel with cyclic dynamics having $N$ states, define a phase-trajectory function $\sigma : \mathbb{N} \to \{0, 1, \ldots, N-1\}$ that gives the canonical phase for each position. The \emph{phase fidelity} is
+\[
+\fphase(c) := \mathbb{E}\left[\frac{1}{L} \sum_{i=1}^{L} \mathbf{1}\{\hat{\sigma}_i(Y) = \sigma(i)\}\right]
+\]
+where $\hat{\sigma}_i$ is the phase recovered from position $i$ of $Y$. The \emph{monomer fidelity} at state $s$ is
+\[
+\fmonomer(c; s) := \mathbb{E}\left[\frac{1}{|\{i : \sigma(i) = s\}|} \sum_{i: \sigma(i) = s} \mathbf{1}\{Y_i = \pi(s)\}\right]
+\]
+where $\pi(s)$ is the canonical monomer for state $s$. For acyclic channels (Mode 1, Mode 5), $N = 1$, $\fphase \equiv 1$, and only $\fmonomer$ is meaningful, simplifying to the per-position correctness rate.
+\end{definition}
+
+\begin{remark}
+$\fphase$ and $\fmonomer$ are not mutual informations. They are moments of the joint distribution capturing different mechanism-level observables. The split is necessary because cyclic channels can fail in two structurally distinct ways: an architectural disruption that breaks $\fphase$ (the cycle no longer alternates) versus a selectivity disruption that degrades $\fmonomer$ within an intact cycle (the alternation continues but with degraded monomer choice). These correspond to the architectural-versus-selectivity gate distinction reported in main paper Results.
+\end{remark}
+
+\subsection{The apparatus signature}
+
+\begin{definition}[Joint signature]
+The apparatus signature for a templating channel $c$ against an ensemble $\mathcal{C}$ is the tuple
+\[
+\sigma(c; \mathcal{C}) := \left(\Istructpop(c), \Istructchan(c; \mathcal{C}), \fphase(c), \fmonomer(c; s)\right)_{s = 0}^{N-1}.
+\]
+Mode classification uses the joint signature; signature collapse to any single coordinate is information-discarding.
+\end{definition}
+
+
+\section{Mode-specific information bounds}
+
+This section proves the scaling-law claims for each of the five primary modes. Mode 6 is treated separately in \S\ref{sec:mode6}.
+
+\subsection{Mode 1 --- linear scaling}
+
+\begin{theorem}[Mode 1 capacity]
+\label{thm:mode1}
+For a Watson-Crick channel with alphabet $|\mathcal{A}| \ge 2$, per-position misincorporation rate $\varepsilon$, template population $\mathcal{X} = \mathcal{A}^L$ with uniform distribution $\Pi_X^{\mathrm{unif}}$, and product $Y$ of length $L$,
+\[
+\Istructpop(X; Y) = L \cdot \left[\log_2 |\mathcal{A}| - \Hbin(\varepsilon) - \varepsilon \log_2 (|\mathcal{A}| - 1)\right].
+\]
+\end{theorem}
+
+\begin{proof}
+The Watson-Crick channel is discrete memoryless: $P(Y_i = \mathrm{wc}(x_i) \mid X_i = x_i) = 1 - \varepsilon$, and $P(Y_i = a' \mid X_i = x_i) = \varepsilon / (|\mathcal{A}| - 1)$ for each $a' \neq \mathrm{wc}(x_i)$. By memorylessness, the channel decomposes per position. For any position $i$, $I(X_i; Y_i) = H(X_i) - H(X_i \mid Y_i)$. Under uniform $\Pi_X$, $H(X_i) = \log_2 |\mathcal{A}|$. By Bayes' rule and uniformity, $H(X_i \mid Y_i) = H(Y_i \mid X_i) = \Hbin(\varepsilon) + \varepsilon \log_2 (|\mathcal{A}| - 1)$. Summing over $L$ positions gives the stated formula.
+\end{proof}
+
+\paragraph{Empirical match.} Across 30 sweep cells with $\varepsilon \in \{0.001, 0.01, 0.05, 0.10, 0.25\}$ and $L \in \{10, 25, 50, 100, 200, 500\}$, $n_{\mathrm{samples}} = 5000$ per cell, the empirical $\Istructpop$ matches Theorem~\ref{thm:mode1} within 0.6\% across all cells (Test A.1, main paper Fig.~1A).
+
+\subsection{Mode 3 --- logarithmic saturation}
+
+\begin{theorem}[Mode 3 capacity bound]
+\label{thm:mode3}
+For an $N$-state cyclic templating channel with phase $X \in \{0, 1, \ldots, N-1\}$ drawn uniformly, and product $Y$ of length $L$ generated by deterministic cycle progression with per-step substrate-selection error $\varepsilon$,
+\[
+\Istructpop(X; Y) \le \log_2 N
+\]
+for all $L$, provided the $N$ phase states are pairwise distinguishable under the product descriptor $\descY$ (so that the phase-conditioned output distributions $P(\descY(Y) \mid X = j)$ are pairwise distinct). The bound is approached in the low-noise long-block limit ($L \to \infty$ with $\varepsilon$ fixed at small positive value); the bound is saturated exactly at $\varepsilon = 0$.
+\end{theorem}
+
+\begin{proof}
+By the data-processing inequality applied to the cycle progression (which is a deterministic function of phase and time step), $I(X; Y) \le I(X; \text{phase trajectory}) \le H(X) = \log_2 N$. The bound is achieved iff phase is recoverable from $Y$, which requires the phase-conditioned output distributions to be pairwise distinguishable. If two phase states $j \ne j'$ produce identical output distributions under $\descY$, then $I(X; Y) < \log_2 N$ strictly. Under pairwise distinguishability and $\varepsilon = 0$, phase is recoverable from $Y_1$ alone (the first position determines the phase that produced it). At $\varepsilon > 0$ the recoverability is imperfect on a single position but improves with $L$ because the periodic structure of $Y$ provides redundant phase information. Standard channel-coding asymptotic analysis \citep[Theorem 8.7.1]{CoverThomas2006} gives $\lim_{L \to \infty} I(X; Y) = \log_2 N$ for fixed $\varepsilon > 0$ in the regime where the cycle's per-step Shannon capacity exceeds zero.
+\end{proof}
+
+\paragraph{Empirical match.} For $N \in \{2, 3, 4, 5, 6, 8, 10\}$, $\varepsilon = 10^{-3}$, $L$ from $L = N$ to $L = 50N$: empirical $\Istructpop$ approaches $\log_2 N$ to within estimator precision (drift across $L$ values $< 0.0001\%$; Test B, main paper Fig.~2A,B).
+
+\subsection{Mode 5 --- module-bounded}
+
+\begin{theorem}[Mode 5 capacity]
+\label{thm:mode5}
+For a modular conveyor with $N$ modules, each independently selecting one monomer from substrate alphabet of size $k$ with fidelity $1 - \varepsilon$, and product $Y$ of length $L$:
+\[
+\Istructpop(X; Y) \le \min(L, N) \cdot \left[\log_2 k - \Hbin(\varepsilon) - \varepsilon \log_2 (k - 1)\right],
+\]
+with positions beyond $\min(L, N)$ contributing zero information (templated positions saturate at $N$; untemplated positions in a $L > N$ product carry no per-position information about the modular template).
+\end{theorem}
+
+\begin{proof}
+Each module independently determines one product position; modules 1 through $\min(L, N)$ are templated, positions $N+1, \ldots, L$ (when $L > N$) have no module association and are drawn from a fixed distribution independent of the modular template. Per-position MI follows the same memoryless argument as Theorem~\ref{thm:mode1} for templated positions and equals 0 for non-templated positions. Summing over the $\min(L, N)$ templated positions gives the stated bound.
+\end{proof}
+
+\paragraph{Empirical match.} Test C, main paper Fig.~2D.
+
+\subsection{Mode 2 --- code-mediated capacity ceiling}
+
+\begin{theorem}[Mode 2 capacity bound]
+\label{thm:mode2}
+For code-mediated translation with DNA template of $L$ codons drawn uniformly random from the 64 codons, standard genetic code (NCBI table 1), translation error rate $\varepsilon \ll 1$, and peptide output $Y$ of length $L$ over 20 amino acids plus stop,
+\[
+\Istructpop(X; Y) \le L \cdot H(\nu),
+\]
+where $\nu$ is the codon-count distribution: $\nu(a) = n(a)/64$, with $n(a)$ the number of codons mapping to amino acid $a$ in the standard genetic code (e.g., $n(\mathrm{Leu}) = 6$, $n(\mathrm{Met}) = 1$).
+\end{theorem}
+
+\begin{proof}
+$I(X; Y) \le H(Y)$. For uniform random $X$, the marginal distribution of $Y_i$ (per codon) is exactly $\nu$, so $H(Y_i) = H(\nu)$. By memorylessness of per-codon translation, $H(Y) = L \cdot H(\nu)$.
+\end{proof}
+
+\paragraph{Empirical match.} $H(\nu) = 4.218$ bits/codon for the standard genetic code (computed from the codon table, including stop as a 21st symbol); empirical $\Istructpop$ at $L = 64$, $n_{\mathrm{samples}} = 1000$, gives 4.214 bits/codon (Test F4). Match to four significant figures.
+
+\paragraph{Capacity comparison with Mode 1.} The same DNA at length $3L$ nucleotides has Mode 1 capacity $6L$ bits (Theorem~\ref{thm:mode1} at $|\mathcal{A}| = 4$). Mode 2 capacity is $L \cdot H(\nu) = 4.218L$ bits. Capacity ratio $= 6/4.218 \approx 1.42$. Code degeneracy reduces information transfer by approximately 30\% from the substrate ceiling.
+
+\paragraph{Note on alternative bounds.} The frequently-cited $L \cdot \log_2(20) = 4.32L$ bits assumes uniform marginal over amino acids, which the standard genetic code does not produce; the correct bound uses $H(\nu)$. Including stop as a 21st symbol gives $H(\nu) = 4.218$ bits; restricting to the 61 sense codons only gives $H(\nu_{\mathrm{sense}}) \approx 4.139$ bits.
+
+\paragraph{Low-error caveat.} The bound $L \cdot H(\nu)$ is the no-error / low-error ceiling: it assumes translation fidelity is high enough that codon-to-amino-acid assignment is effectively deterministic. With non-negligible mistranslation rate $\varepsilon_t > 0$ per codon, the per-codon channel introduces a noisy mapping with capacity strictly below $H(\nu)$, and the realized $\Istructpop$ is correspondingly lower. The theorem above states the ceiling; including mistranslation requires a per-codon channel-capacity correction analogous to the $\Hbin(\varepsilon)$ term in Theorem~\ref{thm:mode1}.
+
+\subsection{Mode 4 --- length independence}
+
+\begin{theorem}[Mode 4 capacity bound]
+\label{thm:mode4}
+For a conformer-state templating channel with $K$ distinguishable conformers and templated polymers of length $L$,
+\[
+\Istructpop(X; Y) \le \log_2 K
+\]
+independently of $L$.
+\end{theorem}
+
+\begin{proof}
+$X$ (the templating conformer) takes $K$ values; $H(X) \le \log_2 K$. The product $Y$ inherits the conformer assignment as a single discrete attribute (its conformational state), regardless of polymer length. The polymer's primary structure is fixed by the genome, not by the conformer.
+\end{proof}
+
+\begin{remark}
+Mode 4 is ``state-templating'' rather than ``position-templating''; the length-independence is a property of the substrate (conformational identity), not a degenerate special case of position templating. The framework treats Mode 4 as $O(1)$ information content as a structural feature, not as an asymptotic limit.
+\end{remark}
+
+\subsection{Mode 6 --- surface-position capacity is possible; biological instances are parasitic and R4-limited}
+\label{sec:mode6}
+
+For a 2D surface-position templating system with $N$ distinguishable surface positions and per-position selection from $k$ options, the combinatorial capacity bound is
+\[
+\Csub^{\mathrm{combinatorial}}(N) \le N \cdot \log_2 k,
+\]
+which can in principle scale unboundedly as the surface area grows. Mode 6 capacity scaling is therefore not bounded by dimensionality alone.
+
+The framework's distinguishing claim about Mode 6 is that biological instances fail two operational requirements distinct from raw combinatorial capacity:
+
+\begin{enumerate}
+  \item \textbf{Parasitic copyability.} The operator that copies the surface pattern, and the units that the surface assembles, are both produced by Mode 1 acting on the genome. Failure of Mode 1 inheritance terminates Mode 6 inheritance. Mode 6's apparent capacity is gated by Mode 1's substrate.
+  \item \textbf{Bounded heritable variation.} The variation that biological Mode 6 transmits is geometric perturbation of an existing unit repertoire, not compositional novelty. The number of distinguishable cortical states a lineage can transmit is bounded by combinatorial arrangements of genome-encoded parts, not by the surface's combinatorial position count. Open-ended scaling requires unboundedly many heritable distinguishable states; biological Mode 6 lacks this because new compositional novelty would require new genome-encoded parts.
+\end{enumerate}
+
+We omit a formal bound because Mode 6's biological instances (ciliate cortex) are not fully characterized at the apparatus level in the published literature. The operational implementation of bounded heredity in the H3 mechanism characterization is the empirically relevant claim; see \S\ref{sec:capacity_generation_theorems} below.
+
+
+\section{Descriptor-relativity}
+\label{sec:descriptor}
+
+\begin{definition}
+Two descriptor maps $\descY, \descY'$ on $\mathcal{Y}$ are \emph{equivalent} if there exists a bijection $\pi$ such that $\descY' = \pi \circ \descY$. A templating event $\mathcal{E}$ analyzed under non-equivalent descriptors $\descY$ and $\descY'$ may give different $\Istructpop$ values.
+\end{definition}
+
+\begin{theorem}[Descriptor non-uniqueness for designed-replicator templating]
+\label{thm:descriptor_nonuniqueness}
+Let a templating event $\mathcal{E}$ propagate constraints between a parent and daughter unit through residue-pairing chemistry (e.g., a designed $\beta$-sheet peptide replicator in which residues at paired positions select their partners by side-chain complementarity). Under a descriptor $\descY^{\mathrm{pair}}$ that records residue identity at each paired position, the templating event classifies as Mode-1-like with information bound determined by the pairing constraints, and $\Istructpop$ scales with the number of paired positions. Under a descriptor $\descY^{\mathrm{conf}}$ that records only the conformational state (which $\beta$-sheet topology was adopted), the same templating event has $\Istructpop = O(1)$.
+\end{theorem}
+
+\begin{proof}[Sketch]
+Under $\descY^{\mathrm{pair}}$, the joint distribution of daughter-unit residue identities given parent residue identities at paired positions has the structure of a position-by-position channel with per-position capacity determined by the pairing-rule alphabet; $\Istructpop$ scales linearly with the number of paired positions, subject to those constraints. Under $\descY^{\mathrm{conf}}$, only the conformational state is observed; the daughter inherits the parent's conformation regardless of how many paired positions exist, so $\Istructpop$ is bounded by $\log_2(\text{number of distinguishable conformations}) = O(1)$.
+\end{proof}
+
+\begin{remark}[Why not amyloid sequence-templating]
+\label{rem:not_amyloid}
+A naive version of this point invokes amyloid or prion sequence propagation as the classifier-dependent case. That framing is incorrect: in biological prions, the amino-acid sequence is genome-encoded, and the amyloid does not template primary sequence at all. The phenomenon biological amyloids transmit is conformational --- not sequence --- and the framework treats this as a clean Mode 4 case (see Discussion, yeast-prion paragraph). The descriptor-relativity point made here is a property of templating systems where pairing-chemistry constraints \emph{do} act position-by-position on the daughter unit's primary structure; designed $\beta$-sheet replicators and analogous synthetic systems are the cleanest examples.
+\end{remark}
+
+\begin{corollary}
+Mode classification applies to (templating event, descriptor) pairs, not to physical objects. The same template can mediate templating events that classify into different modes under different descriptors.
+\end{corollary}
+
+This is what allows the framework to avoid an unresolvable taxonomic question of the form ``is amyloid templating Mode 1 or Mode 4?'' The question is ill-posed; the answer depends on what is being measured.
+
+
+\section{Bulk-matched controls as null hypotheses}
+
+\begin{definition}[$k$-th order matched null]
+Given a product $Y$ from a templating event, the $k$-th order matched null distribution $Q_k$ is the maximum-entropy distribution on $\mathcal{Y}$ that preserves all $k$-th order marginal statistics of the empirical distribution of $Y$. Specifically: $Q_1$ preserves single-position marginals (composition) and is iid from those marginals; $Q_2$ preserves nearest-neighbor frequencies and is the maximum-entropy first-order Markov chain consistent with those frequencies; $Q_k$ preserves $k$-position joint marginals and is the maximum-entropy $(k-1)$-th order Markov chain.
+\end{definition}
+
+\begin{remark}
+For $k = 2$, $Q_2$ is \emph{not} iid; samples from $Q_2$ are first-order Markov sequences whose nearest-neighbor frequencies match the empirical $Y$.
+\end{remark}
+
+\begin{definition}[Bulk-matched paired null]
+\label{def:bulk_null}
+The bulk-matched paired null for a templating event $\mathcal{E}$ is constructed by holding the template ensemble fixed and replacing the channel output with a draw from a $k$-th order matched distribution that destroys position-specific template--product correspondence. Specifically, for each observed template $X$, the null product $Y_{\mathrm{bulk}}$ is drawn from
+\[
+Y_{\mathrm{bulk}} \sim Q_k\!\left(\cdot \mid \mathrm{compositional\ class\ of\ } X\right)
+\]
+where $Q_k$ is the $k$-th order matched distribution fitted to the product ensemble, optionally conditioned on the low-order composition class associated with $X$ but \emph{not} on $X$'s position-specific structure. This preserves $k$-th order marginal statistics between $X$ and $Y_{\mathrm{bulk}}$ while destroying the templating correspondence.
+\end{definition}
+
+\begin{definition}[Structure-scrambled null]
+\label{def:structure_scrambled}
+The structure-scrambled null is a second-order companion to Definition~\ref{def:bulk_null}: for each $(X, Y)$ pair, replace $Y$ with $Y_{\mathrm{scr}}$, a positionally permuted copy of $Y$ that preserves the compositional histogram but randomizes the position assignment. Position-specific information transfer from $X$ to $Y$ is destroyed; compositional information is preserved.
+\end{definition}
+
+\begin{proposition}[Bulk and structure-scrambled controls as nulls]
+\label{prop:bulk_null}
+A claim that $\mathcal{E}$ is a templating event with position-specific structural information transfer requires
+\[
+\Istructpop(\descX(X); \descY(Y)) > \tau \cdot \Istructpop(\descX(X); \descY(Y_{\mathrm{bulk}}))
+\]
+and
+\[
+\Istructpop(\descX(X); \descY(Y)) > \tau \cdot \Istructpop(\descX(X); \descY(Y_{\mathrm{scr}}))
+\]
+where $\tau$ is a stated significance threshold (the main paper uses $\tau \ge 20$ for a ``pass'' verdict).
+\end{proposition}
+
+The threshold $\tau$ encodes the strength of the claim. The paired-null formulation is essential: in an earlier formulation, $X_{\mathrm{bulk}}$ and $Y_{\mathrm{bulk}}$ were drawn independently, which makes $I = 0$ exactly (modulo finite-sample estimator bias), giving a useless control. The paired null keeps the template marginal but breaks the position-specific correspondence, so any residual mutual information reflects compositional or low-order structure shared between $X$ and the product ensemble. Whether a $k$-th order match is sufficient depends on what $k$ captures the confounders: for Mode 1 versus random output, $k = 1$ is sufficient; for Mode 3 versus Mode 1 with periodic-like template, $k \ge 2$ is needed because nearest-neighbor structure differs. The framework reports controls with $k = 2$ by default.
+
+
+\section{Capacity and generation theorems}
+\label{sec:capacity_generation_theorems}
+
+This section formalizes the two necessity results referenced in the main paper: the \emph{capacity theorem} (R1, R2, R3 are necessary for unlimited heredity capacity) and the \emph{generation theorem} (R4 is additionally necessary for cumulative generative recursion beyond deterministic closure). The structure is: notation and structural conditions (§\ref{subsec:conditions}); formal definition of heredity capacity with its upper bound (§\ref{subsec:capacity_def}); formal definition of deterministic closure and cumulative generative recursion (§\ref{subsec:gen_def}); the capacity theorem with proof (§\ref{subsec:capacity_thm}); the generation theorem with proof (§\ref{subsec:generation_thm}); the bounded-heredity corollary recovering each mode's capacity ceiling (§\ref{subsec:bounded}); the finite-population, finite-horizon proposition (§\ref{subsec:plateau}); and the recovery of prior formulations within this structure (§\ref{subsec:synthesis}).
+
+\subsection{Notation and structural conditions}
+\label{subsec:conditions}
+
+Let $\Xset_L$ denote the space of admissible configurations at size parameter $L$; this is countable in all biological examples we treat. Let $\Sigma$ be a finite alphabet, called the \emph{recognition alphabet} of the catalytic operation. A descriptor is a map $\descX : \Xset_L \to \Sigma^{N(L)}$ for some position count $N(L) \ge 1$. The catalytic operation $\Op$ has kernel $Q_L : \Xset_L \times \Xset_L \to [0,1]$ giving the conditional probability of producing $X' = \Op(X)$ from template $X$:
+\begin{equation}
+Q_L(X' \mid X) \ge 0, \qquad \sum_{X' \in \Xset_L} Q_L(X' \mid X) = 1 \text{ for all } X.
+\end{equation}
+We allow $\Op$ to be composed with a reversible involution $\iota : \Xset_L \to \Xset_L$ (e.g., Watson--Crick complementation), with the recursion taking the form $X \to \iota(X') \to X'' \to \cdots$; for notational simplicity we suppress $\iota$ where it does not affect the argument.
+
+The five conditions of the substrate recursion framework are:
+
+\begin{description}
+\item[(R1) Recognition-alphabet entropy.] $|\Sigma| \ge 2$, so $\log_2 |\Sigma| > 0$.
+
+\item[(R2) Unbounded extensible recognition.] $\liminf_{L \to \infty} N(L) = \infty$, where $N(L)$ is the count of independently variable recognized positions of the descriptor $\descX$ under $Q_L$. ``Independently variable'' is meant in the first-order, descriptor-relative sense: the substrate is not constrained to a finite recurrent phase repertoire, and increasing $L$ increases the count of heritable recognized degrees of freedom. The condition does not require strong joint-statistical independence across positions; context-dependent error rates (as in real DNA polymerases) are permitted.
+
+\item[(R3) Catalytic closure under iteration.] For every $X \in \Xset_L$ in the support of $Q_L$, $\Op(X) \in \Xset_L$ (possibly via the reversible involution $\iota$), so that $\Op^2(X)$ is well-defined and the iteration $X \to \Op(X) \to \Op^2(X) \to \cdots$ remains within $\Xset_L$.
+
+\item[(R4) Stochastic drift in $\Sigma$.] The kernel $Q_L(\cdot \mid X)$ has $|\mathrm{supp}\, Q_L(\cdot \mid X)| \ge 2$ for at least some $X \in \Xset_L$, with the dispersion of $\descX(X')$ around $\descX(X)$ lying in the recognition alphabet $\Sigma$ of (R1). Drift in a separate alphabet $\Sigma' \ne \Sigma$ (e.g., chemical modifications outside the polymerase's recognition palette) fails R4.
+
+\item[(R5) Scope: intrinsic catalysis.] The kernel $Q_L$ is determined by intrinsic physicochemistry --- the active-site free-energy landscape, the available reactants, the chemical driving --- not by an externally specified loss function or target product. R5 is scope-defining rather than structural: it demarcates the domain in which R1--R4 apply rather than introducing a fifth necessity condition.
+\end{description}
+
+\subsection{Heredity capacity}
+\label{subsec:capacity_def}
+
+Let $\Pi_X$ denote any probability distribution on $\Xset_L$ (an input ensemble of templates), and let $X' \sim Q_L(\cdot \mid X)$ for $X \sim \Pi_X$.
+
+\begin{definition}[Heredity capacity]
+\label{def:heredity_capacity}
+The \emph{heredity capacity} of $(\Xset, \Op)$ at size $L$ is
+\begin{equation}
+\Csub(L) = \sup_{\Pi_X} I\!\left(\descX(X);\, \descX(X')\right),
+\end{equation}
+the supremum of mutual information between input and output descriptors over all input ensembles.
+\end{definition}
+
+\begin{proposition}[Capacity upper bound]
+\label{prop:capacity_upper}
+For any kernel $Q_L$,
+\begin{equation}
+\Csub(L) \le N(L) \cdot \log_2 |\Sigma|.
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+By the standard identity $I(A; B) = H(B) - H(B \mid A) \le H(B)$, for any input ensemble $\Pi_X$,
+\[
+I(\descX(X); \descX(X')) \le H(\descX(X')).
+\]
+The descriptor $\descX(X')$ takes values in $\Sigma^{N(L)}$, a set of cardinality $|\Sigma|^{N(L)}$, so
+\[
+H(\descX(X')) \le \log_2 |\Sigma|^{N(L)} = N(L) \log_2 |\Sigma|.
+\]
+The supremum over $\Pi_X$ inherits the bound.
+\end{proof}
+
+The bound is achievable iff some $\Pi_X$ realizes a uniform $\descX(X')$ on $\Sigma^{N(L)}$. Realizability requires that the recognition step actually resolve all $|\Sigma|$ states at each of $N(L)$ positions and that the iteration close within $\Xset_L$ --- i.e., R1, R2, R3.
+
+\begin{definition}[Unlimited heredity capacity]
+\label{def:unlimited_heredity}
+$(\Xset, \Op)$ has \emph{unlimited heredity capacity} if $\Csub(L) = \Omega(L)$ as $L \to \infty$.
+\end{definition}
+
+\begin{remark}[Information-theoretic and combinatorial formulations]
+\label{rem:linear_exp}
+Definition \ref{def:unlimited_heredity} is the information-theoretic statement. Its combinatorial equivalent: in the discrete noiseless limit where the upper bound of Proposition \ref{prop:capacity_upper} is saturated, the recursively readable configuration set $\Reach_L = \{X \in \Xset_L : \Op^t(X) \in \Xset_L \text{ for all } t \ge 0\}$ satisfies $|\Reach_L| \ge 2^{cL}$ for some $c > 0$. The two formulations are coordinated through entropy: linear scaling of $\Csub(L)$ in bits is equivalent to exponential scaling of the recursively readable state count. They describe the same fact at two levels.
+\end{remark}
+
+\subsection{Zero-drift closure and cumulative generation}
+\label{subsec:gen_def}
+
+A correct formal account of ``what does R4 add beyond R1--R3'' requires distinguishing the reachable set produced by the kernel's stochastic dynamics from the reachable set produced by a single canonical deterministic skeleton. We previously formulated this distinction using a union over all deterministic restrictions of $Q_L$; that formulation fails because, when $Q_L$ is stochastic, the union absorbs every positive-probability branch and the resulting ``closure'' equals the full positive-probability reachable set, making strict containment logically impossible. The corrected formulation uses the canonical zero-drift map $g_L$, which is already implicit in the framework's notion of a reference product $X_{\mathrm{ref}}$.
+
+\begin{definition}[Zero-drift reference map]
+\label{def:gL}
+The \emph{zero-drift reference map} of the catalytic operation $\Op$ is the deterministic function $g_L : \Xset_L \to \Xset_L$ defined by
+\[
+g_L(X) := X_{\mathrm{ref}}(X),
+\]
+where $X_{\mathrm{ref}}(X)$ is the canonical product of $\Op$ applied to template $X$ under zero drift (the most-probable successor in the noise-free or low-noise limit; e.g., the Watson--Crick complement for a DNA polymerase, the exact alternating product for Drt3b). For all biological substrates we treat, $g_L$ is well-defined; ties (if any) are broken canonically by the chemistry's reference output.
+\end{definition}
+
+\begin{definition}[Zero-drift closure]
+\label{def:cl0}
+The \emph{zero-drift closure} of a set $S_0 \subset \Xset_L$ under $\Op$ is
+\begin{equation}
+\mathrm{cl}_0(S_0) \;=\; \bigcup_{t \ge 0} g_L^t(S_0).
+\end{equation}
+Equivalently, $\mathrm{cl}_0(S_0)$ is the orbit closure of $S_0$ under the deterministic zero-drift dynamics: the set of configurations reachable from $S_0$ if $\Op$ produced its canonical reference output at every step with no error.
+\end{definition}
+
+\begin{definition}[Cumulative generative recursion]
+\label{def:cumulative_generation}
+$(\Xset, \Op)$ supports \emph{cumulative generative recursion} if, for every $L$ sufficiently large and for every finite proper subset $S_0 \subsetneq \Xset_L$ with $|S_0| \ll |\Reach_L|$, the recursively readable descendant set
+\begin{equation}
+\Reach_{Q_L}^{\mathrm{rec}}(S_0) \;=\; \left\{ X \in \Xset_L : \exists\, X_0 \in S_0,\, t \ge 0 \text{ with } Q_L^t(X \mid X_0) > 0 \text{ and } \Op^s(X) \in \Xset_L \text{ for all } s \ge 0 \right\}
+\end{equation}
+strictly contains $\mathrm{cl}_0(S_0)$, with the additional configurations differing from elements of $\mathrm{cl}_0(S_0)$ in local positions of the descriptor $\descX$ (i.e., in the alphabet $\Sigma$).
+\end{definition}
+
+The zero-drift formulation does the work intended for the deterministic-closure definition without absorbing all stochastic branches. If $Q_L$ is itself deterministic and equal to $g_L$ (no drift), then $\Reach_{Q_L}^{\mathrm{rec}}(S_0) = \mathrm{cl}_0(S_0)$, not strict containment --- correctly characterizing R4-failure. If $Q_L$ is stochastic with $\mathrm{supp}\,Q_L(\cdot \mid X) \supsetneq \{g_L(X)\}$ for some $X$ (i.e., R4 holds), then the descendant set contains off-orbit configurations not in $\mathrm{cl}_0(S_0)$, and strict containment holds.
+
+\begin{remark}[Why this formulation is correct where the prior was not]
+\label{rem:cl0_correct}
+The earlier formulation, $\mathrm{cl}_{\det}(S_0) = \bigcup_{f \in \mathcal{D}(Q_L)} \bigcup_t f^t(S_0)$ where $\mathcal{D}(Q_L)$ ranges over all deterministic restrictions of $Q_L$, fails because for any $X' \in \mathrm{supp}\,Q_L(\cdot \mid X)$ there exists $f \in \mathcal{D}(Q_L)$ with $f(X) = X'$. Hence $\bigcup_{f \in \mathcal{D}(Q_L)} \{f(X)\} = \mathrm{supp}\,Q_L(\cdot \mid X)$, and iterating gives $\mathrm{cl}_{\det}(S_0) = $ the full positive-probability reachable set. Strict containment $\Reach_{Q_L}^{\mathrm{rec}}(S_0) \supsetneq \mathrm{cl}_{\det}(S_0)$ is then impossible because $\Reach_{Q_L}^{\mathrm{rec}}(S_0) \subseteq \mathrm{cl}_{\det}(S_0)$ by construction. The zero-drift formulation picks a single canonical deterministic skeleton ($g_L$) rather than a union over all possible skeletons, restoring the desired strict-containment characterization of R4.
+\end{remark}
+
+The counter-chain counterexample is still correctly excluded. A deterministic counter chain $\Xset_L = \{0,1\}^L$, $\Op(X) = X+1 \mod 2^L$, has $Q_L = g_L$ (deterministic kernel coincides with its own zero-drift map), so $\Reach_{Q_L}^{\mathrm{rec}}(S_0) = \mathrm{cl}_0(S_0)$ for any $S_0$. The counter chain leaves $S_0$ but does not exceed $\mathrm{cl}_0(S_0)$; cumulative generation fails. The mistake the earlier ``leaves $S_0$'' formulation made --- treating non-trivial deterministic dynamics as generative --- is correctly avoided.
+
+\subsection{Capacity theorem}
+\label{subsec:capacity_thm}
+
+\begin{theorem}[Capacity necessity]
+\label{thm:supp_capacity}
+Within the (R5) scope, if $(\Xset, \Op)$ has unlimited heredity capacity in the sense of Definition \ref{def:unlimited_heredity}, then R1, R2, and R3 hold.
+\end{theorem}
+
+\begin{proof}
+We prove the contrapositive: failure of any of R1, R2, R3 forces $\Csub(L)$ to scale strictly slower than $\Omega(L)$.
+
+\emph{Case R1 fails.} If $|\Sigma| = 1$, then $\log_2 |\Sigma| = 0$. By Proposition \ref{prop:capacity_upper}, $\Csub(L) \le N(L) \cdot 0 = 0$, so $\Csub(L) \equiv 0$, not $\Omega(L)$.
+
+\emph{Case R2 fails.} If $\liminf_{L \to \infty} N(L) = N_{\max} < \infty$, then $N(L) \le N_{\max}$ for all $L$ sufficiently large. By Proposition \ref{prop:capacity_upper}, $\Csub(L) \le N_{\max} \log_2 |\Sigma|$, a constant in $L$. So $\Csub(L) = O(1)$, not $\Omega(L)$.
+
+\emph{Case R3 fails.} If $\Op(X) \notin \Xset_L$ for some $X$ in the support of $Q_L$ (and not recoverable via reversible involution $\iota$), then for any input $X$ encountered along the iteration, there exists $t \ge 1$ with $\Op^t(X) \notin \Xset_L$, so $X \notin \mathcal{R}_L$. The recursively closed set $\mathcal{R}_L$ is therefore empty (or restricted to a trivially small set of cycles, depending on the specific failure mode). By Definition~\ref{def:capacity}, $\Csub(L) = \sup_{\Pi_X \text{ on } \mathcal{R}_L} \Istructpop$ is taken over an empty or trivially small support set; the supremum is zero or bounded by a constant in $L$. The substrate's recursive heredity capacity, properly defined to exclude one-step transfers to non-recursive products, is therefore not $\Omega(L)$.
+
+By contrapositive, $\Csub(L) = \Omega(L)$ requires R1, R2, and R3.
+\end{proof}
+
+\begin{remark}[R3 and one-step capacity]
+\label{rem:onestep_vs_recursive}
+Theorem~\ref{thm:supp_capacity} is correct because the capacity is taken over $\Pi_X$ supported on $\mathcal{R}_L$, not all of $\Xset_L$. A reader familiar with channel-coding might object that one-step transfer can have $\Omega(L)$ mutual information even when R3 fails (translation: DNA $\to$ protein, $\Omega(L)$ bits in a single round). This is correct as a statement about one-step transfer but not about recursive heredity. The framework's claim concerns the substrate's capacity to host \emph{iterated} information transfer within its own substrate class, which is exactly the restriction encoded in $\mathcal{R}_L$.
+\end{remark}
+
+\begin{remark}[R4 is not required for capacity]
+\label{rem:no_R4_for_capacity}
+Theorem \ref{thm:supp_capacity} does not invoke R4. A perfect copier --- $Q_L(X' \mid X) = \delta_{X', X}$, no drift --- trivially satisfies $\Csub(L) = N(L) \log_2 |\Sigma|$: the channel is the identity on $\Xset_L$, so $I(\descX(X); \descX(X')) = H(\descX(X))$, and choosing $\Pi_X$ uniform on $\Xset_L$ achieves $H(\descX(X)) = N(L) \log_2 |\Sigma|$. This is the structural reason a hypothetical drift-free DNA polymerase would still be a high-capacity inheritance carrier --- it would not innovate from a finite seed, but it would store and transmit the full $4^L$-fold configurational repertoire faithfully.
+\end{remark}
+
+\subsection{Generation theorem}
+\label{subsec:generation_thm}
+
+\begin{theorem}[Generation necessity]
+\label{thm:supp_generation}
+Within the (R5) scope, if $(\Xset, \Op)$ supports cumulative generative recursion in the sense of Definition \ref{def:cumulative_generation}, then R4 holds, in addition to the R1, R2, R3 inherited from coherence of the catalytic process.
+\end{theorem}
+
+\begin{proof}
+R1, R2, R3 are preconditions for cumulative generation as defined: cumulative generation requires a recognition alphabet (R1), at least one extensible position (R2 in the recognition-relevant sense), and a recursion that closes within $\Xset_L$ (R3). We focus on R4.
+
+Suppose R4 fails. There are two cases.
+
+\emph{Case (a): the kernel is deterministic and coincides with $g_L$.} If $|\mathrm{supp}\, Q_L(\cdot \mid X)| = 1$ for all $X \in \Xset_L$, then the unique positive-probability successor of $X$ is $X_{\mathrm{ref}}(X) = g_L(X)$ (by the definition of $X_{\mathrm{ref}}$ as the canonical zero-drift product). So $Q_L$ on its support equals $g_L$, and every positive-probability trajectory of $Q_L$ from $S_0$ is contained in the zero-drift orbit closure:
+\[
+\Reach_{Q_L}^{\mathrm{rec}}(S_0) \;=\; \bigcup_{t \ge 0} g_L^t(S_0) \;=\; \mathrm{cl}_0(S_0).
+\]
+This is not strict containment. Cumulative generation in the sense of Definition \ref{def:cumulative_generation} fails.
+
+\emph{Case (b): the kernel drifts in an alphabet $\Sigma' \ne \Sigma$.} Suppose $Q_L(X' \mid X) > 0$ for some $X' \ne g_L(X)$, but the difference $\descX(X') \ne \descX(g_L(X))$ at position $i$ involves an alphabet character $\sigma' \in \Sigma' \setminus \Sigma$. Then $\descX(X')$ is not in $\Sigma^{N(L)}$ under the recognition map $\descX$: the drift is invisible to the next iteration's recognition step. The next $\Op$-application reads $\descX(X')$ as if it lay in $\Sigma^{N(L)}$, treating $\sigma'$ as the closest $\Sigma$-character or as undefined; either way, the drift in $\Sigma'$ does not propagate as recursively readable variation. Hence $X'$ with $\Sigma'$-drift is excluded from $\Reach_{Q_L}^{\mathrm{rec}}(S_0)$ (the recursive-readability requirement). The descendant set therefore does not strictly contain $\mathrm{cl}_0(S_0)$ \emph{through branching local alternatives in $\Sigma$} (Definition \ref{def:cumulative_generation}'s qualifier).
+
+In both cases, the cumulative-generation requirement fails. By contradiction, R4 holds whenever $(\Xset, \Op)$ supports cumulative generation.
+\end{proof}
+
+\begin{remark}[Counter-chain counterexample under the corrected definition]
+\label{rem:det_closure_essential}
+A deterministic counter chain illustrates why ``leaves $S_0$'' would have been insufficient and shows that the zero-drift formulation correctly excludes the counterexample. Take $\Xset_L = \{0, 1\}^L$, $S_0 = \{0^L\}$, and $\Op(X) = X + 1 \mod 2^L$ with $g_L = \Op$ (the kernel is deterministic and its canonical reference output is itself). Then $\mathrm{cl}_0(S_0) = \bigcup_{t \ge 0} g_L^t(S_0) = \{0, 1, \ldots, 2^L - 1\}$ already includes every state reachable along the orbit. Since $Q_L = g_L$, the descendant set satisfies $\Reach_{Q_L}^{\mathrm{rec}}(S_0) = \mathrm{cl}_0(S_0)$. Not strict containment. The counter chain leaves $S_0$ but does not exceed $\mathrm{cl}_0(S_0)$; cumulative generation correctly fails.
+\end{remark}
+
+\subsection{Bounded-heredity corollary}
+\label{subsec:bounded}
+
+The capacity and generation theorems give the bounded-heredity classification of substrates failing a strict subset of R1--R4.
+
+\begin{corollary}[Bounded heredity, mode-keyed]
+\label{cor:supp_bounded}
+Within the (R5) scope, substrates failing a strict subset of R1--R4 exhibit heredity bounded according to which condition fails:
+\begin{enumerate}
+\item Failure of R1 at the per-site level ($|\Sigma| = 1$): $\Csub(L) = 0$. No heritable distinguishability per site.
+
+\item Failure of R1 at the macro level via a finite attractor repertoire of size $K$, with no extensible recognition substructure: $\Csub(L) \le \log_2 K$, length-independent. Mode 4: prion strains, amyloid attractors, DRT1 filament conformer.
+
+\item Failure of R2 via a finite recurrent phase repertoire of $N$ states: $\Csub(L) \le \log_2 N$, regardless of product length. Mode 3: Drt3b at $N = 2$ gives $\Csub(L) \le 1$ bit.
+
+\item Failure of R2 via finite module count $N$ with per-module alphabet of size $k$: $\Csub(L) \le N \log_2 k$. Mode 5: NRPS, polyketide synthases.
+
+\item Failure of R3: substrate-level heredity is bounded by the information transmitted in a single application of $\Op$; recursion is parasitic on a separate substrate--operator pair that itself satisfies R3. Mode 2 (translation: protein not ribosome-readable; recursion parasitic on Mode 1 acting on the gene encoding the ribosome). Mode 6 (cortex: surface does not autonomously self-copy; recursion parasitic on Mode 1 acting on the genome).
+
+\item Failure of R4: substrate has heredity capacity but cannot generate novelty from a finite initial repertoire. Heredity is bounded by the founding-population repertoire.
+\end{enumerate}
+\end{corollary}
+
+The corollary is a direct consequence of the upper bound in Proposition \ref{prop:capacity_upper} together with the contrapositive structure of Theorems \ref{thm:supp_capacity}--\ref{thm:supp_generation}: each condition failure picks off a specific multiplicative or additive term in the bound. The biological assignment to Modes 1--6 follows the main paper's taxonomy table.
+
+\subsection{Finite-population proposition}
+\label{subsec:plateau}
+
+The bounded-heredity corollary is a substrate-level statement (the heredity capacity ceiling at the kernel level). The corresponding population-level statement --- what happens when a substrate--operator pair with a given failure pattern hosts a finite population under selection --- requires careful scoping. The universal-cap formulation (``mechanisms failing R3 or R4 are structurally capped at $F^*_k < F_{\max}$ under any population dynamics'') is too strong, because a wholesale-redraw mechanism with full support over $\Xset_L$ can sample any configuration by chance with infinite time. The proper finite-horizon, finite-population form follows.
+
+\begin{proposition}[Finite-horizon plateau under nonlocal or absent drift]
+\label{prop:supp_plateau}
+Let a population of size $K$ evolve under selection sharpness $\beta$ toward a target phenotype on a tested-class landscape (single-target Hamming distance, $L$-dimensional alphabet, static), over a horizon $T < \infty$. Then:
+
+\begin{enumerate}
+\item Mechanisms whose substrate--operator pair fails R4 at the individual level (exact-copy systems: M1 lineage-level fixation, M3 individual-level exact copy) cannot exceed the maximum fitness $F_0^*$ present in the founding lineage repertoire. Mean fitness at horizon $T$ is bounded by $F_0^*$ regardless of $K$, $\beta$, or $T$.
+
+\item Mechanisms whose substrate--operator pair has nonlocal R4 (wholesale redraw: M2 at rate $r > 0$) sample novelty with full support over $\Xset_L$ but do not accumulate local improvements. Under the tested update rules, the probability of hitting the target $X^*$ within horizon $T$ is bounded by
+\[
+P(\tau \le T) \;\le\; 1 - \exp\!\left[-\frac{r K T}{|\Xset_L|}\right],
+\]
+with expected hitting time $\mathbb{E}[\tau] \sim |\Xset_L|/(r K)$. Since $|\Xset_L|$ scales as $|\mathcal{A}|^L$, the expected waiting time scales exponentially in $L$, and is negligible at biological scales for any fixed $K$, $r$, and biologically plausible $T$.
+
+\item Mechanisms whose substrate--operator pair satisfies R3 and R4 with individual-level local drift (M4) are not structurally barred from cumulative climbing toward $F_{\max}$. Whether climbing actually occurs depends on landscape topology, finite-population drift, mutation load, neutral-network connectivity, and other conditions outside the framework's scope.
+\end{enumerate}
+\end{proposition}
+
+The proposition is empirically tested in the main paper's Test H3--H5 sweep. The tested class ($L_{\mathrm{target}} \in \{16, 32, 64, 128\}$, $K = 400$, $\beta \in \{2, 5, 10, 20\}$, 30 replicates per cell) confirms each item: M0 (no recursion) plateaus at chance ($0.250$); M1 and M3 (R4 fails) plateau near $F_0^* \approx 0.47\text{--}0.50$; M2 at sweet-spot $r^* = 0.10$ plateaus at $\sim 0.53$; M4 reaches $\sim 0.97$. The proposition's positive direction (M4 not structurally barred) is bounded: the simulation shows climbing on the tested landscape; it does not establish climbing on arbitrary landscapes.
+
+\subsection{Synthesis and recovery of prior formulations}
+\label{subsec:synthesis}
+
+The capacity and generation theorems clarify how prior formulations of the inheritance question fit within the framework. The correspondence in the table below is \emph{conceptual} rather than mathematical equivalence: some entries are tight (Szathm\'ary's unlimited heredity is exactly $\Csub(L) = \Omega(L)$ once the recursive-capacity definition is in place; Hull's replicator ontology is exactly R3 in its operational content), while others are interpretive in the sense that they identify which of the framework's conditions the prior formulation is addressing without claiming the two are formally equivalent statements (this is the appropriate reading of Pross's dynamic kinetic stability and Walker--Davies's top-down causation).
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Prior formulation & Conceptual correspondence & Reference \\
+\midrule
+Schr\"odinger's aperiodic crystal & R1 + R2 (extensible recognition) & \citep{Schrodinger1944} \\
+Szathm\'ary's unlimited heredity & $\Csub(L) = \Omega(L)$ (capacity theorem) & \citep{Szathmary2000} \\
+Eigen's error threshold & Dynamical bound on $Q_L$ given R4, R5 & \citep{Eigen1971, EigenMcCaskillSchuster1989} \\
+Wagner's neutral networks & Topological condition on R4 drift in $\Sigma$ & \citep{Wagner2005, Wagner2011} \\
+Pross's dynamic kinetic stability & Thermodynamic-driving condition on R4 & \citep{Pross2011} \\
+Hull's replicator ontology & R3 (substrate reads its own product) & \citep{Hull1980} \\
+Maynard Smith's units of selection & R3 + R4 jointly & \citep{MaynardSmith2000} \\
+Hofmeyr's $(F, A)$-systems & R3 in categorical form & \citep{Hofmeyr2017} \\
+Vasas et al.\ GARD refutation & Capacity-R2 failure for composition substrates & \citep{Vasas2010} \\
+Walker--Davies top-down causation & R3 in causal-flow form & \citep{WalkerDavies2013} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The substantive contribution beyond these prior formulations is twofold: (i) the separation of \emph{capacity} (R1, R2, R3) from \emph{generation} (R4), which makes precise why a perfect copier transmits but does not innovate, and (ii) the explicit scope-defining role of R5, which marks the boundary between intrinsic catalytic chemistry and externally optimized search procedures.
+
+Within this synthesis: Schr\"odinger's aperiodic-crystal intuition is precisely R1 (alphabet entropy) and R2 (extensible recognition) jointly; Szathm\'ary's unlimited heredity is exactly the capacity-theorem conclusion $\Csub(L) = \Omega(L)$; Eigen's error threshold is a dynamical bound \emph{on} $Q_L$ that becomes well-defined only once R4 holds and (R5) places the kernel in the intrinsic-physicochemistry domain; Wagner's neutral-network requirement is the topological structure of drift that R4 produces; Pross's dynamic kinetic stability supplies the thermodynamic driving under which R4 is sustainable; Hull's replicator ontology requires R3 (the substrate's product must be itself a substrate); Hofmeyr's $(F, A)$-systems give the categorical formulation of R3; Vasas et al.'s GARD refutation independently establishes capacity-theorem R2 failure for composition-vector substrates via a dynamical-fidelity route; Walker--Davies top-down causation supplies the causal-flow content of R3 in the information-substrate-to-phenotype direction.
+
+The framework's value lies in the unification: each prior formulation addresses a particular condition or pair of conditions; the capacity/generation split shows precisely how the conditions combine and which biological chemistries fail which.
+
+
+\bibliographystyle{plainnat}
+\bibliography{templating_substrates}
+
+\end{document}
