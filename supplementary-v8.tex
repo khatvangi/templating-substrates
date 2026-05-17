@@ -1,0 +1,542 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Supplementary Mathematical Appendix
+%%% A theory of templating substrates --- v4
+%%% Substrate recursion principle as primary, taxonomy/simulations as corollaries
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[round]{natbib}
+\usepackage{hyperref}
+\usepackage{booktabs}
+%\usepackage{microtype}  % disabled — pdfTeX font expansion fails with default fonts in this env
+
+\hypersetup{colorlinks=true, allcolors=black, citecolor=blue, urlcolor=blue}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Istructpop}{I_{\mathrm{struct}}^{\mathrm{pop}}}
+\newcommand{\Istructchan}{I_{\mathrm{struct}}^{\mathrm{chan}}}
+\newcommand{\fphase}{f_{\mathrm{phase}}}
+\newcommand{\fmonomer}{f_{\mathrm{monomer}}}
+\newcommand{\Csub}{C_{\mathcal{S}}}
+\newcommand{\Hbin}{h_b}
+\newcommand{\descX}{\varphi_X}
+\newcommand{\descY}{\varphi_Y}
+\newcommand{\KL}[2]{D_{\mathrm{KL}}\!\left(#1 \,\|\, #2\right)}
+\newcommand{\Xset}{\mathcal{X}}
+\newcommand{\Sset}{\mathcal{S}}
+\newcommand{\Op}{\mathcal{O}}
+\newcommand{\liminff}{\liminf_{L\to\infty}}
+
+\title{Supplementary Mathematical Appendix\\
+\large A theory of templating substrates --- v4}
+\author{Boggavarapu Kiran et al.}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\noindent
+This appendix provides formal definitions and proofs for the mathematical claims in the main paper. The material is organized into six sections corresponding to the apparatus, mode-specific information bounds, descriptor-relativity, the formal sense of bulk-matched controls, the substrate recursion principle and its primary necessity theorem, and the population-dynamic corollary.
+
+The appendix is written for a reader with graduate-level information theory \citep{CoverThomas2006} and basic familiarity with discrete memoryless channels. Notation follows the main paper; $|\mathcal{A}|$ denotes alphabet cardinality, $\Hbin(p) = -p \log_2 p - (1-p) \log_2 (1-p)$ is binary entropy, and $\KL{P}{Q}$ is Kullback-Leibler divergence.
+
+\tableofcontents
+\bigskip
+
+\section{Formal apparatus definitions}
+
+\subsection{The templating event}
+
+A templating event is a tuple $\mathcal{E} = (X, O, S, \Delta G; \descX, \descY, Y)$ where:
+\begin{itemize}
+  \item $X \in \mathcal{X}$ is the template, drawn from a template population with distribution $\Pi_X$ (which may be a point mass $\delta_x$ for a single fixed template).
+  \item $O$ is the operator (separable molecular machinery; possibly empty if templating is autocatalytic).
+  \item $S$ is the substrate pool from which $Y$ is constructed.
+  \item $\Delta G$ is the free-energy budget driving the templating reaction.
+  \item $\descX: \mathcal{X} \to \mathcal{X}'$ and $\descY: \mathcal{Y} \to \mathcal{Y}'$ are descriptor maps on template and product spaces.
+  \item $Y$ is the structured product, distributed as $Y \mid (X, O, S, \Delta G) \sim P_{\mathrm{chan}}(\cdot \mid X)$, where $P_{\mathrm{chan}}$ is the templating channel induced by $O$ acting on $(X, S, \Delta G)$.
+\end{itemize}
+
+The templating channel $P_{\mathrm{chan}}(\cdot \mid X)$ is a stochastic kernel from $\mathcal{X}$ to $\mathcal{Y}$. When $\descX = \descY$ the templating is \emph{same-descriptor}; otherwise it is \emph{cross-descriptor} and $O$ implements the descriptor coupling.
+
+\subsection{Population mutual information}
+
+\begin{definition}[Population MI]
+For a templating event $\mathcal{E}$ with template population $\mathcal{X}$ and distribution $\Pi_X$,
+\[
+\Istructpop(\mathcal{E}) := H(\descY(Y)) - \mathbb{E}_{X \sim \Pi_X}\left[ H(\descY(Y) \mid X) \right]
+\]
+where the marginal $H(\descY(Y))$ is computed under the law $Y \sim \int_\mathcal{X} P_{\mathrm{chan}}(\cdot \mid x) \, d\Pi_X(x)$ and the conditional entropies are under $P_{\mathrm{chan}}(\cdot \mid X)$.
+\end{definition}
+
+\begin{proposition}[Population MI bound]
+\label{prop:pop_bound}
+$\Istructpop(\mathcal{E}) \le H(\Pi_X)$.
+\end{proposition}
+
+\begin{proof}
+$\Istructpop$ is the mutual information $I(X; Y)$ computed under $\Pi_X$ and the channel $P_{\mathrm{chan}}$. By the data-processing inequality applied to $\descY$ as deterministic post-processing of $Y$, $I(\descX(X); \descY(Y)) \le I(X; Y) \le H(X) = H(\Pi_X)$.
+\end{proof}
+
+\begin{corollary}[Fixed-template degeneracy]
+\label{cor:fixed_template}
+When $\mathcal{X} = \{x_0\}$ is a single fixed template, $H(\Pi_X) = 0$, so $\Istructpop(\mathcal{E}) = 0$ by construction.
+\end{corollary}
+
+This corollary is the formal content of the framework's claim that biological systems with single fixed templates (Drt3a's single ncRNA, a single chromosome being replicated within a cell) have zero population MI. Population MI measures \emph{cross-realization information transfer}; for a fixed template, there are no realizations to transfer between.
+
+\subsection{Substrate capacity}
+
+\begin{definition}[Substrate capacity]
+\label{def:capacity}
+For a templating substrate class $\mathcal{S}$ and template length $L$, the capacity is
+\[
+\Csub(L) := \sup_{\Pi_X \text{ on } \mathcal{X}_L} \Istructpop(\mathcal{E}).
+\]
+\end{definition}
+
+The supremum is over template-distribution choices on the substrate's $L$-length template space $\mathcal{X}_L$. $\Csub$ is a property of the substrate class, not of any particular biological realization. In contrast, $\Istructpop$ is the realized population MI in a specified system. Both are needed; conflating them is a common failure mode of substrate-level reasoning.
+
+\begin{remark}
+For Mode 1 (Watson-Crick) at alphabet size $|\mathcal{A}|$ and per-position misincorporation rate $\varepsilon$, $\Csub(L) = L \cdot \left[ \log_2 |\mathcal{A}| - \Hbin(\varepsilon) - \varepsilon \log_2 (|\mathcal{A}| - 1) \right]$, achieved by the uniform distribution $\Pi_X^{\mathrm{unif}}$ (Theorem~\ref{thm:mode1}). For Mode 3 with $N$-state cyclic dynamics, $\Csub(L) \le \log_2 N$ for all $L$, regardless of template-distribution choice (Theorem~\ref{thm:mode3}).
+\end{remark}
+
+\subsection{Channel mutual information}
+
+\begin{definition}[Channel MI against an ensemble]
+Let $\mathcal{C} = \{c_1, \ldots, c_K\}$ be a finite ensemble of templating channels with prior $P(C)$. For a focal channel $c \in \mathcal{C}$,
+\[
+\Istructchan(c; \mathcal{C}) := \KL{P(\descY(Y) \mid C = c)}{\bar{P}(\descY(Y))}
+\]
+where the mixture distribution is
+\[
+\bar{P}(\descY(Y)) := \sum_{c' \in \mathcal{C}} P(C = c') P(\descY(Y) \mid C = c').
+\]
+The full ensemble channel MI is
+\[
+\bar{I}_{\mathrm{struct}}^{\mathrm{chan}}(\mathcal{C}) := \sum_{c \in \mathcal{C}} P(C = c) \KL{P(\descY(Y) \mid C = c)}{\bar{P}}.
+\]
+\end{definition}
+
+\begin{proposition}[Channel MI bound]
+\label{prop:chan_bound}
+$\bar{I}_{\mathrm{struct}}^{\mathrm{chan}}(\mathcal{C}) \le \log_2 |\mathcal{C}|$, with equality iff the channels in $\mathcal{C}$ produce mutually disjoint output distributions.
+\end{proposition}
+
+\begin{proof}
+$\bar{I}_{\mathrm{struct}}^{\mathrm{chan}}(\mathcal{C}) = I(C; Y)$ under the joint law $P(C, Y) = P(C) P(Y \mid C)$. $H(C) \le \log_2 |\mathcal{C}|$. The mutual information is bounded by either marginal entropy. Equality of $I(C; Y)$ and $H(C)$ occurs iff $Y$ determines $C$, i.e., iff the conditional distributions $P(Y \mid C = c)$ have disjoint supports.
+\end{proof}
+
+\begin{remark}[Channel MI for fixed templates]
+Unlike $\Istructpop$, $\Istructchan$ does not vanish for fixed-template channels. A channel with a single fixed template still produces a distinguishable output distribution against alternative channels, and the divergence $\KL{P(Y \mid C = c)}{\bar{P}}$ measures that distinguishability. This is the formal content of the framework's claim that $\Istructchan$ distinguishes Drt3a (Mode 1 with fixed ncRNA template) from Drt3b (Mode 3 with cyclic active site) even when both are individual cellular realizations with fixed mechanisms.
+\end{remark}
+
+\subsection{Per-base mechanism fidelity}
+
+\begin{definition}[Phase fidelity and monomer fidelity]
+For a templating channel with cyclic dynamics having $N$ states, define a phase-trajectory function $\sigma : \mathbb{N} \to \{0, 1, \ldots, N-1\}$ that gives the canonical phase for each position. The \emph{phase fidelity} is
+\[
+\fphase(c) := \mathbb{E}\left[\frac{1}{L} \sum_{i=1}^{L} \mathbf{1}\{\hat{\sigma}_i(Y) = \sigma(i)\}\right]
+\]
+where $\hat{\sigma}_i$ is the phase recovered from position $i$ of $Y$. The \emph{monomer fidelity} at state $s$ is
+\[
+\fmonomer(c; s) := \mathbb{E}\left[\frac{1}{|\{i : \sigma(i) = s\}|} \sum_{i: \sigma(i) = s} \mathbf{1}\{Y_i = \pi(s)\}\right]
+\]
+where $\pi(s)$ is the canonical monomer for state $s$. For acyclic channels (Mode 1, Mode 5), $N = 1$, $\fphase \equiv 1$, and only $\fmonomer$ is meaningful, simplifying to the per-position correctness rate.
+\end{definition}
+
+\begin{remark}
+$\fphase$ and $\fmonomer$ are not mutual informations. They are moments of the joint distribution capturing different mechanism-level observables. The split is necessary because cyclic channels can fail in two structurally distinct ways: an architectural disruption that breaks $\fphase$ (the cycle no longer alternates) versus a selectivity disruption that degrades $\fmonomer$ within an intact cycle (the alternation continues but with degraded monomer choice). These correspond to the architectural-versus-selectivity gate distinction reported in main paper Results.
+\end{remark}
+
+\subsection{The apparatus signature}
+
+\begin{definition}[Joint signature]
+The apparatus signature for a templating channel $c$ against an ensemble $\mathcal{C}$ is the tuple
+\[
+\sigma(c; \mathcal{C}) := \left(\Istructpop(c), \Istructchan(c; \mathcal{C}), \fphase(c), \fmonomer(c; s)\right)_{s = 0}^{N-1}.
+\]
+Mode classification uses the joint signature; signature collapse to any single coordinate is information-discarding.
+\end{definition}
+
+
+\section{Mode-specific information bounds}
+
+This section proves the scaling-law claims for each of the six modes. Each mode's classification is mapped to the substrate recursion principle's condition-failure pattern in \S5.
+
+\subsection{Mode 1 --- linear scaling (satisfies R1--R5)}
+
+\begin{theorem}[Mode 1 capacity]
+\label{thm:mode1}
+For a Watson-Crick channel with alphabet $|\mathcal{A}| \ge 2$, per-position misincorporation rate $\varepsilon$, template population $\mathcal{X} = \mathcal{A}^L$ with uniform distribution $\Pi_X^{\mathrm{unif}}$, and product $Y$ of length $L$,
+\[
+\Istructpop(X; Y) = L \cdot \left[\log_2 |\mathcal{A}| - \Hbin(\varepsilon) - \varepsilon \log_2 (|\mathcal{A}| - 1)\right].
+\]
+\end{theorem}
+
+\begin{proof}
+The Watson-Crick channel is discrete memoryless: $P(Y_i = \mathrm{wc}(x_i) \mid X_i = x_i) = 1 - \varepsilon$, and $P(Y_i = a' \mid X_i = x_i) = \varepsilon / (|\mathcal{A}| - 1)$ for each $a' \neq \mathrm{wc}(x_i)$. By memorylessness, the channel decomposes per position. For any position $i$, $I(X_i; Y_i) = H(X_i) - H(X_i \mid Y_i)$. Under uniform $\Pi_X$, $H(X_i) = \log_2 |\mathcal{A}|$. By Bayes' rule and uniformity, $H(X_i \mid Y_i) = H(Y_i \mid X_i) = \Hbin(\varepsilon) + \varepsilon \log_2 (|\mathcal{A}| - 1)$. Summing over $L$ positions gives the stated formula.
+\end{proof}
+
+Mode 1's substrate-class status: satisfies all four structural conditions of Definition~\ref{def:conditions_formal} within the (R5) scope. (R1) holds because alphabet $|\Sigma| = |\mathcal{A}| \ge 2$ gives $h_{\mathrm{site}} = \log_2 |\mathcal{A}| > 0$. (R2) holds because positions index into a 1D extensible polymer with $N(L) = L \to \infty$. (R3) holds via the involution $\iota: X \to \bar{X}$ (Watson-Crick complementarity); the daughter strand $X' = \bar{X}$ is itself in the substrate class and serves as template for $\Op$ in the next iteration. (R4) holds because the polymerase kernel produces drift in the same alphabet, and the daughter strand's sequence is the next iteration's template. (R5) holds because the polymerase's catalytic action is intrinsic physicochemistry without externally specified target.
+
+\paragraph{Empirical match.} Across 30 sweep cells with $\varepsilon \in \{0.001, 0.01, 0.05, 0.10, 0.25\}$ and $L \in \{10, 25, 50, 100, 200, 500\}$, $n_{\mathrm{samples}} = 5000$ per cell, the empirical $\Istructpop$ matches Theorem~\ref{thm:mode1} within 0.6\% across all cells (Test A.1, main paper Fig.~1A).
+
+\subsection{Mode 3 --- logarithmic saturation (fails R2 extensibility)}
+
+\begin{theorem}[Mode 3 capacity bound]
+\label{thm:mode3}
+For an $N$-state cyclic templating channel with phase $X \in \{0, 1, \ldots, N-1\}$ drawn uniformly, and product $Y$ of length $L$ generated by deterministic cycle progression with per-step substrate-selection error $\varepsilon$,
+\[
+\Istructpop(X; Y) \le \log_2 N
+\]
+for all $L$. The bound is approached in the low-noise long-block limit ($L \to \infty$ with $\varepsilon$ fixed at small positive value); the bound is saturated exactly at $\varepsilon = 0$.
+\end{theorem}
+
+\begin{proof}
+By the data-processing inequality applied to the cycle progression (which is a deterministic function of phase and time step), $I(X; Y) \le I(X; \text{phase trajectory}) \le H(X) = \log_2 N$. The bound is achieved iff phase is recoverable from $Y$. At $\varepsilon = 0$ the cycle is noise-free and phase is recoverable from $Y_1$ alone (the first position determines the phase that produced it). At $\varepsilon > 0$ the recoverability is imperfect on a single position but improves with $L$ because the periodic structure of $Y$ provides redundant phase information. Standard channel-coding asymptotic analysis \citep[Theorem 8.7.1]{CoverThomas2006} gives $\lim_{L \to \infty} I(X; Y) = \log_2 N$ for fixed $\varepsilon > 0$ in the regime where the cycle's per-step Shannon capacity exceeds zero.
+\end{proof}
+
+Mode 3's substrate-class status: fails (R2). The position count $N(L)$ is the cycle phase, bounded at $N$ and recurrent regardless of $L$: positions $i$ and $i + N$ have the same phase. The position count is not extensible without modifying the substrate itself (adding cycle states). (R1) is satisfied within the cycle phase alphabet for $N \ge 2$ ($h_{\mathrm{site}} = \log_2 N > 0$); the macro-level capacity bound $\log_2 N$ comes from R2 failure, not R1 failure. (R3), (R4) are satisfied within the bounded cycle; (R5) is satisfied. DRT7 at $N=1$ is the boundary case where $h_{\mathrm{site}} = \log_2 1 = 0$ and (R1) also fails: the substrate has zero positional capacity and is structurally a biased polymerase.
+
+\paragraph{Empirical match.} For $N \in \{2, 3, 4, 5, 6, 8, 10\}$, $\varepsilon = 10^{-3}$, $L$ from $L = N$ to $L = 50N$: empirical $\Istructpop$ approaches $\log_2 N$ to within estimator precision (drift across $L$ values $< 0.0001\%$; Test B, main paper Fig.~2A,B).
+
+\subsection{Mode 5 --- module-bounded (fails R2 extensibility, R3 same-operation)}
+
+\begin{theorem}[Mode 5 capacity]
+\label{thm:mode5}
+For a modular conveyor with $N$ modules, each independently selecting one monomer from substrate alphabet of size $k$ with fidelity $1 - \varepsilon$, and product $Y$ of length $L$:
+\begin{align*}
+\Istructpop(X; Y) &= N \cdot \left[\log_2 k - \Hbin(\varepsilon) - \varepsilon \log_2 (k - 1)\right] \quad \text{for } L \ge N, \\
+\Istructpop(X; Y) &= L \cdot \left[\log_2 k - \Hbin(\varepsilon) - \varepsilon \log_2 (k - 1)\right] \quad \text{for } L < N,
+\end{align*}
+with positions $L > N$ (when $L > N$) carrying zero per-position information.
+\end{theorem}
+
+\begin{proof}
+Each module independently determines one product position; modules 1 through $\min(L, N)$ are templated, positions $N+1, \ldots, L$ (when $L > N$) have no module association and are drawn from a fixed distribution independent of the modular template. Per-position MI follows the same memoryless argument as Theorem~\ref{thm:mode1} for templated positions and equals 0 for non-templated positions.
+\end{proof}
+
+Mode 5's substrate-class status: fails (R2) (position bounded at module count $N$) and fails (R3) at the substrate level (peptide product is not the assembly line). Recursion is parasitic on Mode 1 acting on the gene cluster encoding the modules.
+
+\paragraph{Empirical match.} Test C, main paper Fig.~2D.
+
+\subsection{Mode 2 --- code-mediated capacity ceiling (fails R3, parasitic on Mode 1)}
+
+\begin{theorem}[Mode 2 capacity bound]
+\label{thm:mode2}
+For code-mediated translation with DNA template of $L$ codons drawn uniformly random from the 64 codons, standard genetic code (NCBI table 1), translation error rate $\varepsilon \ll 1$, and peptide output $Y$ of length $L$ over 20 amino acids plus stop,
+\[
+\Istructpop(X; Y) \le L \cdot H(\nu),
+\]
+where $\nu$ is the codon-count distribution: $\nu(a) = n(a)/64$, with $n(a)$ the number of codons mapping to amino acid $a$ in the standard genetic code (e.g., $n(\mathrm{Leu}) = 6$, $n(\mathrm{Met}) = 1$).
+\end{theorem}
+
+\begin{proof}
+$I(X; Y) \le H(Y)$. For uniform random $X$, the marginal distribution of $Y_i$ (per codon) is exactly $\nu$, so $H(Y_i) = H(\nu)$. By memorylessness of per-codon translation, $H(Y) = L \cdot H(\nu)$.
+\end{proof}
+
+Mode 2's substrate-class status: fails (R3). The protein product $Y$ is not readable by the ribosome as a template for further translation; the same operation $\Op$ does not have $Y$ in its input domain. The recursion is recovered parasitically: the encoding gene for the lookup-table operator is itself in a Mode 1 substrate, and Mode 1's recursion in that gene produces successive copies of the operator. Mode 2's heritability depends on Mode 1's recursion in the gene encoding the operator.
+
+\paragraph{Empirical match.} $H(\nu) = 4.218$ bits/codon for the standard genetic code; empirical $\Istructpop$ at $L = 64$, $n_{\mathrm{samples}} = 1000$, gives 4.214 bits/codon (Test F4). Match to four significant figures.
+
+\paragraph{Capacity comparison with Mode 1.} The same DNA at length $3L$ nucleotides has Mode 1 capacity $6L$ bits (Theorem~\ref{thm:mode1} at $|\mathcal{A}| = 4$). Mode 2 capacity is $L \cdot H(\nu) = 4.218L$ bits. Capacity ratio $= 6/4.218 \approx 1.42$. Code degeneracy reduces information transfer by approximately 30\% from the substrate ceiling.
+
+\paragraph{Note on alternative bounds.} The frequently-cited $L \cdot \log_2(20) = 4.32L$ bits assumes uniform marginal over amino acids, which the standard genetic code does not produce; the correct bound uses $H(\nu)$. Including stop as a 21st symbol gives $H(\nu) = 4.218$ bits; restricting to the 61 sense codons only gives $H(\nu_{\mathrm{sense}}) \approx 4.139$ bits.
+
+\subsection{Mode 4 --- length independence (fails R1 alphabet, R2 position)}
+
+\begin{theorem}[Mode 4 capacity bound]
+\label{thm:mode4}
+For a conformer-state templating channel with $K$ distinguishable conformers and templated polymers of length $L$,
+\[
+\Istructpop(X; Y) \le \log_2 K
+\]
+independently of $L$.
+\end{theorem}
+
+\begin{proof}
+$X$ (the templating conformer) takes $K$ values; $H(X) \le \log_2 K$. The product $Y$ inherits the conformer assignment as a single discrete attribute (its conformational state), regardless of polymer length. The polymer's primary structure is fixed by the genome, not by the conformer.
+\end{proof}
+
+Mode 4's substrate-class status: fails (R1) at the macro level ($h_{\mathrm{site}}$ is bounded above by $\log_2 K$ for $K$-state attractor recognition, with $K$ small and not scaling with $L$). Fails (R2) trivially ($N(L) \approx 1$: a single conformer assignment rather than an extensible series of addressable sites). (R3) is satisfied within the conformer space (PrPSc seeds PrPC conversion to PrPSc), and prion strain repertoires confirm some drift transmission. The transmissible drift lies in the small attractor set, consistent with (R1) failure: the drift is in the recognition alphabet, but the recognition alphabet is not extensible.
+
+\begin{remark}
+Mode 4 is ``state-templating'' rather than ``position-templating''; the length-independence is a property of the substrate (conformational identity), not a degenerate special case of position templating. The framework treats Mode 4 as $O(1)$ information content as a structural feature, not as an asymptotic limit.
+\end{remark}
+
+\subsection{Mode 6 --- bounded by part inventory, parasitic on Mode 1 (fails R2, R3)}
+\label{sec:mode6}
+
+For a 2D surface-position templating system with $N$ distinguishable surface positions and per-position selection from $k$ unit types, the combinatorial capacity bound is
+\[
+\Csub^{\mathrm{combinatorial}}(N) \le N \cdot \log_2 k,
+\]
+which can in principle scale unboundedly as surface area grows. Mode 6 capacity scaling is therefore not bounded by surface dimensionality or by the unit-type alphabet alone.
+
+The framework's distinguishing claim about Mode 6 is that biological instances fail two structural recursion conditions (Definition~\ref{def:conditions_formal}):
+
+\begin{enumerate}
+  \item \textbf{Failure of R3 (same-operation recursion).} The 2D pattern is not autonomously self-copying. There is no operation $\Op$ from surfaces to surfaces such that $\Op(X)$ is itself a surface readable by $\Op$. Pattern copying at division depends on Mode 1 acting on the genome to produce the constituent proteins, and on cellular machinery to assemble them; the recursion that maintains the cortex across generations is the Mode 1 recursion in the genome, not a surface-to-surface recursion. The surface inherits its pattern only through this parasitic relationship to Mode 1.
+  \item \textbf{Failure of R4 (heritable local drift in the recognized alphabet).} Even though the 2D pattern can drift in its surface configuration (the orientation of grafted basal-body rows, for example, can be inverted and propagate as inverted), the drift accumulates only insofar as it does not require new unit types not encoded in the genome. Drift in the surface pattern that is not also drift in the genome cannot accumulate as heritable variation in the recursive sense: at the next division, the cell rebuilds the pattern from genome-encoded parts, and any pattern-level drift not preserved by the assembly machinery is lost. The substrate's content (the surface pattern) and templating function (its role as input to the next generation's pattern assembly) are not the same physical entity in the way (R4) requires --- they are coupled to the genome's content as the load-bearing substrate.
+\end{enumerate}
+
+What Mode 6 satisfies (R1, R2): per-site entropy $h_{\mathrm{site}} = \log_2 k > 0$ over the unit-type alphabet, and unbounded extensible position count $N(L) \to \infty$ with surface area. The structural failure is in the recursion topology, not the capacity.
+
+We omit a formal bound because Mode 6's biological instances (ciliate cortex) are not fully characterized at the apparatus level in the published literature. The operational implementation of bounded heredity in the M2 mechanism characterization (\S6) is the empirically relevant claim. Mode 6 is parasitic on Mode 1 in the same structural sense Mode 2 (translation) is parasitic on Mode 1: the recursion that supports inheritance is the Mode 1 recursion in the encoding gene, not a same-operation recursion within Mode 6 itself.
+
+
+\section{Descriptor-relativity}
+\label{sec:descriptor}
+
+\begin{definition}
+Two descriptor maps $\descY, \descY'$ on $\mathcal{Y}$ are \emph{equivalent} if there exists a bijection $\pi$ such that $\descY' = \pi \circ \descY$. A templating event $\mathcal{E}$ analyzed under non-equivalent descriptors $\descY$ and $\descY'$ may give different $\Istructpop$ values.
+\end{definition}
+
+\begin{theorem}[Descriptor non-uniqueness for amyloid templating]
+\label{thm:amyloid}
+Let an amyloid $\beta$-sheet polymer $A$ propagate its conformational state to a peptide $P$. Under the descriptor $\descY^{\mathrm{seq}} = $ ``amino-acid sequence of $P$,'' the templating event classifies as Mode-1-like with information bound determined by the $\beta$-sheet residue-pairing constraints. Under the descriptor $\descY^{\mathrm{conf}} = $ ``$\beta$-sheet conformational state of $P$,'' the same templating event classifies as Mode 4 with information bound $O(1)$.
+\end{theorem}
+
+\begin{proof}[Sketch]
+Under $\descY^{\mathrm{seq}}$, the joint distribution of $P$'s amino-acid sequence given $A$'s amino-acid sequence has the structure of a position-by-position channel constrained by $\beta$-sheet pairing rules; $\Istructpop$ scales linearly with $L$ subject to those constraints. Under $\descY^{\mathrm{conf}}$, only the conformational state is observed; $P$'s conformation inherits $A$'s regardless of length, so $\Istructpop$ is bounded by $\log_2(\text{number of distinguishable conformations}) = O(1)$.
+\end{proof}
+
+\begin{corollary}
+Mode classification applies to (templating event, descriptor) pairs, not to physical objects. The same template can mediate templating events that classify into different modes under different descriptors.
+\end{corollary}
+
+\subsection{Descriptor-relativity and the substrate recursion principle}
+
+The principle's conditions (R1)--(R4) of Definition~\ref{def:conditions_formal}, plus the (R5) scope, are stated in terms of substrate properties, but operationalizing them through the apparatus requires descriptor choice $(\descX, \descY)$. The framework's commitment is that under admissible descriptor choices --- those satisfying pre-specification, measurability, noise-stability, non-triviality, and causal testability --- the principle's verdict on a substrate is stable. This is not the claim that the principle is descriptor-free at the operational level; it is the claim that the structural conditions are preserved across reasonable descriptor variations. Empirically, we have demonstrated stability for the Drt3b case across the natural range of descriptor choices.
+
+
+\section{Bulk-matched controls as null hypotheses}
+
+\begin{definition}[$k$-th order matched null]
+Given a product $Y$ from a templating event, the $k$-th order matched null distribution $Q_k$ is the maximum-entropy distribution on $\mathcal{Y}$ that preserves all $k$-th order marginal statistics of the empirical distribution of $Y$. Specifically: $Q_1$ preserves single-position marginals (composition) and is iid from those marginals; $Q_2$ preserves nearest-neighbor frequencies and is the maximum-entropy first-order Markov chain consistent with those frequencies; $Q_k$ preserves $k$-position joint marginals and is the maximum-entropy $(k-1)$-th order Markov chain.
+\end{definition}
+
+\begin{remark}
+For $k = 2$, $Q_2$ is \emph{not} iid; samples from $Q_2$ are first-order Markov sequences whose nearest-neighbor frequencies match the empirical $Y$.
+\end{remark}
+
+\begin{definition}[Bulk-matched control]
+The bulk-matched control for a templating event $\mathcal{E}$ is a templating-free null in which:
+\begin{itemize}
+  \item $Y_{\mathrm{bulk}}$ is drawn from $Q_k$ for some specified $k$ (typically $k = 1$ or $k = 2$).
+  \item $X_{\mathrm{bulk}}$ is drawn independently from any distribution; the templating channel is replaced by independence of $X_{\mathrm{bulk}}$ and $Y_{\mathrm{bulk}}$.
+\end{itemize}
+$\Istructpop(X_{\mathrm{bulk}}; Y_{\mathrm{bulk}})$ measures the apparent information that arises purely from $k$-th order compositional structure shared between template and product, with no position-specific templating.
+\end{definition}
+
+\begin{proposition}[Bulk control as null]
+A claim that $\mathcal{E}$ is a templating event with structural information transfer requires
+\[
+\Istructpop(X; Y) > \tau \cdot \Istructpop(X_{\mathrm{bulk}}; Y_{\mathrm{bulk}})
+\]
+where $\tau$ is a stated significance threshold (the main paper uses $\tau \ge 20$ for a ``pass'' verdict).
+\end{proposition}
+
+The threshold $\tau$ encodes the strength of the claim. Compositional bias alone can produce non-zero $\Istructpop$ through $k$-th order shared statistics; the bulk-matched control isolates position-specific information transfer from the compositional contribution. Whether a $k$-th order match is a sufficient null depends on what $k$ captures the confounders: for Mode 1 versus random output the bulk-match at $k = 1$ is sufficient; for Mode 3 versus Mode 1 with periodic-like template, $k \ge 2$ is needed because nearest-neighbor structure differs. The framework reports controls with $k = 2$ by default.
+
+
+\section{Substrate recursion principle: necessity proof}
+\label{sec:principle_proof}
+
+This section formalizes the substrate recursion principle stated in main paper Definition~\ref{def:openended} and Definition~\ref{def:conditions}, and proves the necessity theorem.
+
+\subsection{Independent definition of open-ended information-generating recursion}
+
+\begin{definition}[Open-ended information-generating recursion --- formal restatement]
+\label{def:openended_formal}
+A substrate-operation pair $(\Xset, \Op)$ supports \textnormal{open-ended information-generating recursion} if the configuration repertoire generated by iterated application of $\Op$ scales exponentially in the size parameter $L$. Formally: starting from any $X_0 \in \Xset_L$ and iterating $X_{t+1} = \Op(X_t)$ (possibly composed with a reversible involution $\iota$), the cumulative repertoire $\mathcal{R}_T(L) := |\bigcup_{t \le T} \mathrm{supp}(X_t \mid X_0)|$ satisfies
+\[
+\liminf_{L \to \infty} \frac{1}{L} \log_2 |\mathcal{R}_{T(L)}(L)| > 0
+\]
+for some choice of horizon $T(L)$ that grows polynomially in $L$.
+\end{definition}
+
+This definition is structural and substrate-internal; it makes no reference to the conditions (R1)--(R4). The repertoire-scaling criterion is the operational content of ``open-ended information generation'': configurations accumulate faster than any polynomial in $L$, so the system is not eventually exhausted.
+
+The recursion has no privileged starting configuration. Every $X_t$ for $t > 0$ is the drifted product of prior recursions, and Definition~\ref{def:openended_formal} is invariant under choice of $X_0 \in \Xset_L$. This is the formal content of the substrate-essentialist commitment.
+
+\subsection{Substrate recursion conditions, formalized}
+
+\begin{definition}[Substrate recursion conditions --- formal restatement]
+\label{def:conditions_formal}
+A substrate-operation pair $(\Xset, \Op)$ consists of:
+\begin{itemize}
+  \item A family of admissible configuration spaces $\{\Xset_L\}_{L \ge 1}$.
+  \item A descriptor map $\descX: \Xset_L \to \Sigma^{N(L)}$ over a recognition alphabet $\Sigma$, where $N(L)$ is the number of independently addressable positions in a configuration of size $L$.
+  \item A stochastic operation $\Op$ with kernel $Q_L: \Xset_L \to \Xset_L$, possibly composed with a reversible involution $\iota: \Xset_L \to \Xset_L$.
+\end{itemize}
+
+The pair satisfies the substrate recursion conditions if:
+
+\begin{description}
+\item[(R1) Positive entropy per recognized site.] $|\Sigma| \ge 2$ and $h_{\mathrm{site}} := \log_2 |\Sigma| > 0$.
+
+\item[(R2) Unbounded extensible position count.] $\liminf_{L \to \infty} N(L) = \infty$, with the positions independently addressable: for any $L_0$ and $X \in \Xset_{L_0}$, no proper prefix $\descX(X)_{1:k}$ with $k < N(L_0)$ uniquely determines $\descX(X)_{k+1:N(L_0)}$.
+
+\item[(R3) Same-operation recursion (with allowed involution).] $\Op^2$ is well-defined: $\Op(\Op(X)) \in \Xset_L$, possibly via $\Op(\iota(\Op(X))) \in \Xset_L$ for some reversible $\iota$.
+
+\item[(R4) Heritable local drift in $\Sigma$.] The kernel $Q_L$ satisfies (a) $\mathrm{supp}(Q_L(\cdot \mid X)) \cap \Xset_L \setminus \{X_{\mathrm{ref}}(X)\} \neq \emptyset$ for $X$ in a positive-measure subset of $\Xset_L$ and any reference configuration $X_{\mathrm{ref}}(X)$, and (b) the drift $X' \neq X_{\mathrm{ref}}(X)$ lies in the same alphabet $\Sigma$ as the recognition step in (R1), with the descriptor of the drifted configuration serving as input to the next iteration's recognition.
+
+\item[(R5) Scope: non-teleological intrinsic operation.] The kernel $Q_L$ depends only on $(\Xset, \Op)$'s physicochemistry, not on an externally specified target distribution, loss function, or convergence criterion. (R5) demarcates the domain in which (R1)--(R4) apply rather than being itself a structural condition.
+\end{description}
+\end{definition}
+
+The R1/R2 separation factorizes capacity into per-site entropy times site count: a substrate's repertoire-scaling rate depends on both, and the conditions are independent. R5 is set apart because its content is domain-restricting rather than information-bounding; its formal status is different from (R1)--(R4).
+
+\subsection{Necessity theorem and lemmas}
+
+\begin{theorem}[Necessity of substrate recursion conditions]
+\label{thm:principle_necessity}
+Let $(\Xset, \Op)$ be a substrate-operation pair within the scope defined by \textnormal{(R5)}. If $(\Xset, \Op)$ supports open-ended information-generating recursion in the sense of Definition~\ref{def:openended_formal}, then it satisfies \textnormal{(R1)}, \textnormal{(R2)}, \textnormal{(R3)}, and \textnormal{(R4)}.
+\end{theorem}
+
+The proof uses two capacity lemmas.
+
+\begin{proposition}[Lemma R1: per-site entropy bound]
+\label{lemma:R1}
+Let $C(L)$ denote the maximum information rate of the descriptor channel $\descX: \Xset_L \to \Sigma^{N(L)}$. Then $C(L) \le N(L) \cdot h_{\mathrm{site}}$ where $h_{\mathrm{site}} = \log_2 |\Sigma|$.
+\end{proposition}
+
+\begin{proof}
+Each of the $N(L)$ positions is independently distributed over $\Sigma$ under the maximum-entropy distribution; the total entropy is at most $N(L) \cdot \log_2 |\Sigma| = N(L) \cdot h_{\mathrm{site}}$ by the chain rule and the per-position entropy bound.
+\end{proof}
+
+\begin{proposition}[Lemma R2: site-count divergence]
+\label{lemma:R2}
+The cumulative repertoire bound $|\mathcal{R}_T(L)| \le 2^{N(L) \cdot h_{\mathrm{site}}}$ scales as $\Theta(2^{cL})$ for some $c > 0$ only if $N(L) \to \infty$ as $L \to \infty$.
+\end{proposition}
+
+\begin{proof}
+If $N(L)$ is bounded above by $N_{\max}$, then $|\mathcal{R}_T(L)| \le 2^{N_{\max} \cdot h_{\mathrm{site}}}$ is constant in $L$, which fails the $\Theta(2^{cL})$ scaling for any $c > 0$. The site count $N(L)$ must therefore diverge.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:principle_necessity}]
+We prove the contrapositive. Suppose any of (R1), (R2), (R3), (R4) fails; we show $(\Xset, \Op)$ does not support open-ended information-generating recursion.
+
+\textbf{Failure of (R1).} If $h_{\mathrm{site}} = 0$, then by Lemma~\ref{lemma:R1}, $C(L) = 0$, and the repertoire $|\mathcal{R}_T(L)|$ cannot scale exponentially in $L$. In the macro-level case where the recognition alphabet at the substrate level has $K$ attractor states (Mode 4), $h_{\mathrm{site}}$ is bounded above by $\log_2 K$, which is constant in $L$; combined with the typical $N(L) \approx 1$ for state-templating substrates, the repertoire is bounded at $\log_2 K$.
+
+\textbf{Failure of (R2).} If $N(L)$ is bounded at $N_{\max}$, then by Lemma~\ref{lemma:R2}, $|\mathcal{R}_T(L)|$ is bounded at $2^{N_{\max} \cdot h_{\mathrm{site}}}$, which is constant in $L$. Mode 3 illustrates: cycle phase recurs every $N$ positions, so $N(L) = N$ regardless of $L$, and the repertoire is bounded at $\log_2 N$. Mode 5 illustrates: module count $N$ bounds positions independently of $L$.
+
+\textbf{Failure of (R3).} If $\Op^2$ is not defined within $\Xset_L$ and no involution $\iota$ recovers a configuration in $\Xset_L$, then iteration of $\Op$ terminates at the first application or transitions to a different substrate class on the second. The cumulative repertoire $|\mathcal{R}_T(L)|$ across $T$ iterations does not grow with $T$ within the substrate class because the substrate exits after one application. Heritability is recovered only parasitically through a different substrate that satisfies (R3); the original $(\Xset, \Op)$ does not autonomously support recursion. Mode 2 (translation), Mode 5 (NRPS), and Mode 6 (cortex) illustrate.
+
+\textbf{Failure of (R4).} Two sub-cases.
+
+\emph{(R4a)} If $Q_L(X' \mid X) = \delta_{X_{\mathrm{ref}}(X)}(X')$ for some reference function $X_{\mathrm{ref}}$ (no drift: deterministic operation), then iterated $\Op$ produces a deterministic trajectory starting from any initial $X_0$; the cumulative repertoire is at most countable in the iteration index, not $\Theta(2^{cL})$.
+
+\emph{(R4b)} If drift occurs but lies outside the recognition alphabet $\Sigma$ (variation in a different physical attribute that does not affect $X$'s role as template in the next iteration), then the drift is not heritable in the recursive sense: the next iteration's $\Op$ acts on a template whose recognition-relevant properties are unchanged. The cumulative repertoire grows only in the non-recursive attribute, which does not feed back into the recursion.
+
+The conjunction (R1) $\wedge$ (R2) $\wedge$ (R3) $\wedge$ (R4) is necessary because each failure forces a different bound on the repertoire scaling, and the failures are compositional: a substrate failing only (R1) but satisfying (R2)--(R4) still saturates at the (R1) bound.
+\end{proof}
+
+The proof factorizes through the two capacity lemmas: Lemma R1 bounds the per-site entropy, Lemma R2 requires site-count divergence, and the capacity bound $C(L) \ge N(L) \cdot h_{\mathrm{site}}$ requires both. (R3) closes the recursion within the substrate. (R4) ensures drift enters the recursion. The conjunction is what makes repertoire scaling exponential in $L$.
+
+\subsection{R5 as scope-defining}
+
+(R5) is treated separately because its formal status differs from (R1)--(R4). The structural conditions (R1)--(R4) admit information-theoretic bounds (Lemmas R1, R2; closure of $\Op^2$; non-degeneracy of $Q_L$). (R5) does not admit such a bound. Its role is to demarcate the domain of substrates to which the theorem applies.
+
+If (R5) fails --- if the kernel $Q_L$ depends on an externally specified function $\mathcal{F}: \Xset_L \to \mathbb{R}$ (target, loss, or convergence criterion) such that the action of $\Op$ is biased toward $\mathcal{F}^{-1}(\text{minima})$ --- then the configuration repertoire converges toward $\mathcal{F}^{-1}(\text{minima})$, which is by construction a target set rather than an open-ended exploration. The accumulation rate is bounded by the target set's measure, and the dynamics is an externally driven optimization rather than a substrate-level recursion. The system is outside the principle's scope rather than failing the structural conditions; the theorem says nothing about it. Differential persistence under environmental filtering acting on $\Op$'s products is permitted within the (R5) scope; what (R5) excludes is operations whose internal kernel is target-directed.
+
+This is why we treat (R5) as scope-defining rather than as a fifth structural condition. Treating (R5) as structural would conflate domain restriction with information-theoretic necessity. Externally optimized systems (gradient descent, designed catalytic cycles) are outside the principle's domain of application; the principle does not claim they fail biological recursion structurally, only that they are not the kind of system the principle analyzes.
+
+\subsection{Mode classification under the principle, corrected}
+
+\begin{corollary}[Mode classification under the principle]
+\label{cor:mode_principle}
+Each of the six modes documented in the main paper corresponds to a specific (R1)--(R4) failure pattern within the (R5) scope:
+\begin{itemize}
+  \item \textbf{Mode 1} satisfies all four structural conditions.
+  \item \textbf{Mode 2} fails (R3) at the substrate level; recursion is parasitic on Mode 1.
+  \item \textbf{Mode 3} fails (R2) (cycle phase $N(L)$ bounded at cycle length). The macro-level information capacity is consequently bounded at $\log_2 N$; (R1) is satisfied within the cycle phase alphabet ($h_{\mathrm{site}} = \log_2 N > 0$ for $N \ge 2$). DRT7 at $N=1$ is the boundary case where $\log_2 1 = 0$ and the substrate has zero positional capacity --- structurally a biased polymerase rather than a Mode 3 instance.
+  \item \textbf{Mode 4} fails (R1) at the macro level ($h_{\mathrm{site}}$ bounded at $\log_2 K$ for $K$-state attractor) and (R2) trivially ($N(L) \approx 1$).
+  \item \textbf{Mode 5} fails (R2) (bounded module count) and (R3) (peptide product is not the assembly line; recursion parasitic on Mode 1).
+  \item \textbf{Mode 6} satisfies (R1) and (R2) at the surface level (positions extensible with surface area, multiple unit types in the alphabet) but fails (R3) (the surface does not autonomously self-copy; copying depends on Mode 1 acting on the genome) and (R4) (pattern drift independent of genome drift cannot accumulate as heritable variation in the recursive sense).
+\end{itemize}
+The bound on each mode's information capacity, proved in \S2, is the quantitative consequence of its specific (R1)--(R4) failure pattern.
+\end{corollary}
+
+
+\section{Population-dynamic corollary: plateaus from condition failure}
+\label{sec:population_corollary}
+
+This section proves the population-dynamic corollary stated in main paper Corollary~\ref{cor:plateau} and the inheritance theorem of v3 is here recovered as a special case applied to finite populations under selection.
+
+\begin{corollary}[Population-dynamic plateau --- formal restatement]
+\label{cor:plateau_formal}
+Let $(\Xset, \Op)$ be a substrate-operation pair within the (R5) scope, and let $\mathcal{P}_t$ denote a population of $K$ configurations evolving under iterated $\Op$ with selection toward a target phenotype $\phi^*$ on a tested fitness landscape $F: \Xset_L \to [0, F_{\max}]$. Let $\bar{F}_t := K^{-1} \sum_{X \in \mathcal{P}_t} F(X)$ denote mean population fitness at iteration $t$. Then:
+
+\begin{enumerate}
+  \item If $(\Xset, \Op)$ fails (R3) or (R4) at the individual level (e.g., $\Op$ acts only at lineage level, or no drift is introduced per iteration), then $\lim_{t \to \infty} \mathbb{E}[\bar{F}_t] = F^*_{\mathrm{mech}} < F_{\max}$, where $F^*_{\mathrm{mech}}$ is a mechanism-specific ceiling determined by the failed condition. The cap is structural: it does not depend on landscape topology or population dynamics beyond the basic finite-$K$, finite-$L$ assumptions.
+
+  \item If $(\Xset, \Op)$ satisfies (R3) and (R4) at the individual level, then $\mathcal{P}_t$ is not structurally barred from cumulative climbing toward $F_{\max}$. Whether climbing actually occurs depends on landscape topology (ruggedness, connectivity of neutral networks), finite-population drift, mutation load, and other conditions outside the principle's scope. The corollary's positive direction therefore makes a non-impossibility claim, not a sufficiency claim.
+\end{enumerate}
+\end{corollary}
+
+\begin{proof}[Sketch]
+\textbf{Part 1 (R3 or R4 fails at individual level).}
+
+\emph{R3 fails at individual level (lineage-level fixation, M1).} Drift enters the population only at lineage founding (random initial template draw). Under selection, lineages with chance-favorable templates dominate; the population's mean fitness converges to $F^*_{\mathrm{mech}} = \max_{X \in \mathcal{P}_0} F(X)$, the maximum fitness present in the initial population's lineage repertoire. With finite $K$ and finite $L$, $\mathbb{E}[F^*_{\mathrm{mech}}] < F_{\max}$ unless $\mathcal{P}_0$ happens to contain the optimal template, which has probability exponentially small in $L$.
+
+\emph{R4 fails at individual level (lineage re-draws, M2).} Drift is introduced through wholesale re-draw at rate $r$. The population alternates between lineage fixation (within-cohort) and random re-initialization (between-cohorts). Optimal $r^*$ trades off lineage advantage against escape from suboptimal initial draws; empirically $r^* \approx 0.10$ in tested conditions. The resulting plateau $F^*_{\mathrm{mech}}(r^*) < F_{\max}$ because re-draws destroy accumulated improvements rather than building on them locally. The framework's H4/H5 head-to-head test confirms this: at matched per-offspring drift rates, M4 (R1--R4 satisfied within R5 scope) reaches $0.997$ while M2 (R4 partial) reaches $0.548$ on the tested landscape.
+
+\emph{R4 fails at individual level (exact copy without drift, M3).} Drift rate is zero per offspring; the population's fitness ceiling equals $\max_{X \in \mathcal{P}_0} F(X)$, the maximum fitness present in the initial population. Equivalent to M1 in plateau but distinguishable in dynamics: M3 retains within-lineage exact copying, M1 has lineage-level fixation.
+
+\textbf{Part 2 (R3 and R4 satisfied within R5 scope).} If $\Op$ acts on individual configurations with heritable local drift in $\Sigma$, then drift continually enters the recursive substrate. There is no structural cap on the cumulative fitness gain across iterations; whether the population actually climbs depends on (a) per-offspring drift rate $\mu$ being below Eigen's error threshold $\mu^* \approx \log \sigma / L$ \citep{Eigen1971, EigenMcCaskillSchuster1989} so the master sequence is preserved, (b) drift lying within the substrate's neutral network \citep{Wagner2005, Wagner2011} so copyability is preserved, (c) population size $K$ being sufficient to escape drift-driven extinction, (d) landscape connectivity allowing mutational paths between low and high fitness regions. The principle does not establish these conditions; it establishes that they can in principle obtain. In the tested model class (single-peak fitness landscape, target phenotype $\phi^*$, $K = 400$, $L \in \{16, 32, 64, 128\}$, $\beta \in \{2, 5, 10, 20\}$), M4 reaches near-target fitness; the corollary does not generalize beyond the tested model class.
+\end{proof}
+
+\begin{remark}[Recovery of v3 inheritance theorem]
+The inheritance theorem of v3, which posited four conditions (open-ended substrate capacity, individual-level descent with local modification, copyability-preserving variation, genotype-phenotype linkage) on a templating substrate class, is recovered as a special case of the substrate recursion principle applied to finite-population dynamics under selection. The mapping:
+\begin{itemize}
+  \item v3 condition (i) (open-ended substrate capacity) is the conjunction of (R1) (positive entropy per recognized site, $h_{\mathrm{site}} > 0$) and (R2) (unbounded extensible position count, $N(L) \to \infty$) at the substrate level. The factorization $C(L) \ge N(L) \cdot h_{\mathrm{site}}$ makes the two contributions independent.
+  \item v3 condition (ii) (individual-level descent with local modification) is the conjunction of (R3) (same-operation recursion) at the individual level and (R4) (heritable local drift) at the individual level.
+  \item v3 condition (iii) (variation that preserves copyability) is the requirement that (R4)'s drift lies within the substrate's neutral network and that the per-offspring drift rate is below Eigen's error threshold.
+  \item v3 condition (iv) (genotype-phenotype linkage) is a population-dynamics requirement that the descriptor $\descX$ and the phenotype descriptor $\descY^{\mathrm{phenotype}}$ are causally linked across iterations. This requirement applies within the (R5) scope: where selection acts on phenotype and the operation acts on the substrate, the linkage is preserved by physicochemistry. Outside the (R5) scope (externally optimized systems), the linkage may exist but is not what (R5)-scope substrates instantiate.
+\end{itemize}
+The substrate recursion principle is logically prior; the v3 inheritance theorem describes a population-level consequence of the principle when applied to finite populations under selection in the (R5) scope.
+\end{remark}
+
+\subsection{Recovery table}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Prior formulation & Recovers condition & Reference \\
+\midrule
+Pross's dynamic kinetic stability & (R3), (R5) thermodynamically & \citep{Pross2011} \\
+Hull's replicator ontology & (R3) at individual level ontologically & \citep{Hull1980} \\
+Eigen's error threshold & (R4) at sub-Eigen rate & \citep{Eigen1971} \\
+Wagner's neutral networks & (R4) topological & \citep{Wagner2005} \\
+Schr\"odinger's aperiodic crystal & (R1), (R2) & \citep{Schrodinger1944} \\
+Szathm\'ary's unlimited heredity & (R1), (R2) & \citep{Szathmary2000} \\
+Hofmeyr's $(F, A)$-systems & population-level g/p linkage & \citep{Hofmeyr2017} \\
+Walker-Davies top-down causation & population-level g/p linkage, physical & \citep{WalkerDavies2013} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The framework synthesizes these into the principle's four structural conditions plus one scope-defining condition, with the population-dynamic corollary recovering the v3 inheritance theorem as a special case applied to finite populations under selection in the (R5) scope.
+
+
+\bibliographystyle{plainnat}
+\bibliography{templating_substrates}
+
+\end{document}
