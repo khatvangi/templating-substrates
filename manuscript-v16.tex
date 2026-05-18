@@ -45,8 +45,11 @@
 \renewcommand{\thesubfigure}{\Alph{subfigure}}
 \captionsetup[subfigure]{labelformat=simple,labelsep=space,font=bf,singlelinecheck=false}
 
-% Zenodo DOI for the deposited code/data/dispatches archive (v0.0-prereg release).
+% Zenodo DOIs: pre-specification anchor (v0.0-prereg release) and
+% reproducibility snapshot (v1.0-submission release). Both archived
+% via the GitHub-Zenodo webhook integration on khatvangi/templating-substrates.
 \newcommand{\zenodoDOI}{\href{https://doi.org/10.5281/zenodo.20060972}{10.5281/zenodo.20060972}}
+\newcommand{\zenodoSubmissionDOI}{\href{https://doi.org/10.5281/zenodo.20272479}{10.5281/zenodo.20272479}}
 
 % Theorem environments — REVTeX doesn't predefine these
 \newtheoremstyle{plain-thm}
@@ -395,7 +398,7 @@ The bulk-matched control $X_{\mathrm{bulk}}, Y_{\mathrm{bulk}}$ preserves $k$th-
 
 \subsection{Simulation framework}
 
-Simulations were implemented in Python 3.10 using NumPy 1.24 and Matplotlib 3.7. Random seeds were set explicitly for reproducibility (per-replicate seed = $42 + \mathrm{cell\_idx} \times 100 + \mathrm{rep\_idx}$). Computations ran on a 64-CPU compute node. Code and raw simulation outputs are available at \zenodoDOI{}.
+Simulations were implemented in Python 3.10 using NumPy 1.24 and Matplotlib 3.7. Random seeds were set explicitly for reproducibility (per-replicate seed = $42 + \mathrm{cell\_idx} \times 100 + \mathrm{rep\_idx}$). Computations ran on a 64-CPU compute node. Code and raw simulation outputs are available at \zenodoSubmissionDOI{} (full submission-state snapshot); see Data Availability for the relationship to the earlier pre-specification deposit at \zenodoDOI{}.
 
 \subsection{Test A.1 --- Mode 1 length-scaling validation}
 
@@ -612,7 +615,7 @@ M4 (individual + local drift) & None (R1--R4 satisfied within R5 scope) & 0.832 
 
 \section*{Data Availability}
 
-All simulation code, raw simulation outputs, the diagnostic apparatus implementation, the family-level analysis pipeline, and the dispatch markdown files containing the pre-specified analysis plans for each test cohort are deposited in a permanent public repository archived at \zenodoDOI{}. Phylogenetic input files (\texttt{science\_aed1656\_data\_s4--s8}) are derived from the published supplementary material of \citet{Deng2026}. The deposit's git history records the commit ordering: Phase 0 retroactively commits the dispatches with their original filesystem mtimes preserved as commit metadata; Phases 1--5 commit the test scripts, result CSVs, and figure pipeline. The pre-specified predictions are also reproduced verbatim in the docstring headers of the test scripts (e.g.\ \texttt{test\_h\_competition.py}) committed in Phases 2--4.
+All simulation code, raw simulation outputs, the diagnostic apparatus implementation, the family-level analysis pipeline, and the dispatch markdown files containing the pre-specified analysis plans for each test cohort are deposited in a permanent public repository (\href{https://github.com/khatvangi/templating-substrates}{github.com/khatvangi/templating-substrates}) and archived on Zenodo with two complementary DOIs: \zenodoDOI{} is the \emph{pre-specification anchor} (release \texttt{v0.0-prereg}, archiving the analysis-plan dispatches at the moment of pre-registration before the empirical work began), and \zenodoSubmissionDOI{} is the \emph{reproducibility snapshot} (release \texttt{v1.0-submission}, archiving the full submission state including manuscript, supplementary appendix, bibliography, figures, all test scripts, and all result CSVs). Phylogenetic input files (\texttt{science\_aed1656\_data\_s4--s8}) are derived from the published supplementary material of \citet{Deng2026}. The deposit's git history records the commit ordering: Phase 0 retroactively commits the dispatches with their original filesystem mtimes preserved as commit metadata; Phases 1--5 commit the test scripts, result CSVs, and figure pipeline. The pre-specified predictions are also reproduced verbatim in the docstring headers of the test scripts (e.g.\ \texttt{test\_h\_competition.py}) committed in Phases 2--4.
 
 
 \bibliographystyle{apsrev4-2}
