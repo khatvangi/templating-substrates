@@ -91,5 +91,3 @@ Department of Chemistry and Physics
 McNeese State University
 Lake Charles, LA 70609, USA
 kiran@mcneese.edu
-
-Co-author: Sreedhar Volet (Indras Bioinformatics, Hyderabad, India)
