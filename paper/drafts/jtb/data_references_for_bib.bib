@@ -1,0 +1,41 @@
+% Data-reference entries for templating_substrates.bib
+%
+% JTB Option C: deposit, cite, and link. These two @misc entries appear in
+% the reference list with a leading "[dataset]" tag that JTB strips at proof
+% but uses to identify data citations for indexing.
+%
+% Cite in the manuscript body with:
+%   \citep{Zenodo_submission_2026, Zenodo_prespec_2026}
+% or wherever appropriate (Methods and Data Availability sections are the
+% conventional places).
+%
+% ORCID and Zenodo entries: confirm author names/order match what is
+% deposited on the Zenodo records. If only Boggavarapu Kiran is the sole
+% Zenodo depositor, change the author lists accordingly.
+
+@misc{Zenodo_submission_2026,
+  author       = {Kiran, B. and Volet, S.},
+  title        = {Templating substrates: reproducibility snapshot (v1.0-submission) [software/dataset]},
+  year         = {2026},
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.20272479},
+  url          = {https://doi.org/10.5281/zenodo.20272479},
+  note         = {[dataset]},
+}
+
+@misc{Zenodo_prespec_2026,
+  author       = {Kiran, B. and Volet, S.},
+  title        = {Templating substrates: pre-specification anchor (v0.0-prereg) [dataset]},
+  year         = {2026},
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.20060972},
+  url          = {https://doi.org/10.5281/zenodo.20060972},
+  note         = {[dataset]},
+}
+
+%% Note on the "[dataset]" tag:
+%% Elsevier's reference-style processor recognizes "[dataset]" at the very
+%% start of an entry as a flag for data references. Some implementations
+%% want it in the title field (as above), others want a separate field.
+%% For JTB at submission time, putting it at the start of the title and
+%% in the note field is the safest both-ways encoding.
