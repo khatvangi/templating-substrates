@@ -26,8 +26,8 @@ SHA256 of the source: `073b99a87cc89af0361eef8e06e6794e76ffc1ad3a57338063c350375
 
 ## Key decisions still pending
 
-1. **Authorship**: JTB manuscript has two authors (Sreedhar + Boggavarapu). PRX/bioRxiv path was sole-author. Resolve before submitting. (See `presubmit_checklist.md`.)
-2. **CRediT roles for Sreedhar**: spec leaves these as `[TO BE SET]` — assign per actual contribution.
+1. ~~Authorship~~: **RESOLVED 2026-06-26 — sole author (Boggavarapu Kiran).** Applied consistently across `jtb-mansucript.tex`, `manuscript-v18.tex`, supporting JTB documents, and Zenodo data references.
+2. ~~CRediT roles~~: **RESOLVED** — all roles attributed to the sole author; see `credit_contributions.md`.
 3. **Funding**: spec assumes unfunded — confirm.
 4. **AI disclosure scope**: spec wording covers "language editing and clarity" — broaden if AI was used for analysis, code, or figure design.
 5. **Reviewer slate**: five candidates suggested; vet each for current affiliation/email and COI.

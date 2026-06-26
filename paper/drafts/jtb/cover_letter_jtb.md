@@ -8,13 +8,13 @@ We give the physicochemical conditions a template–catalyst pair must satisfy, 
 
 The work is theoretical in method but biological in aim and consequence: its contribution is a structural account of biological inheritance and a classification of real templating systems with experimentally testable predictions, not a mathematical result for its own sake. We have kept the formal statements and proofs in a supplementary mathematical appendix so the main text remains intelligible to biologists across fields, in line with the journal's guidance.
 
-The manuscript is not under consideration elsewhere, and all authors approve its submission. An earlier version is posted as a preprint on bioRxiv ([DOI to be inserted once assigned]), which does not constitute prior publication. All code, simulation outputs, and pre-specified analysis plans are openly available on Zenodo (10.5281/zenodo.20272479; pre-specification anchor 10.5281/zenodo.20060972) and GitHub (https://github.com/khatvangi/templating-substrates). The authors declare no competing interests.
+The manuscript is not under consideration elsewhere. An earlier version is posted as a preprint on bioRxiv ([DOI to be inserted once assigned]), which does not constitute prior publication. All code, simulation outputs, and pre-specified analysis plans are openly available on Zenodo (10.5281/zenodo.20272479; pre-specification anchor 10.5281/zenodo.20060972) and GitHub (https://github.com/khatvangi/templating-substrates). The author declares no competing interests.
 
-We suggest several potential reviewers in the submission form and would be grateful for your consideration.
+I suggest several potential reviewers in the submission form and would be grateful for your consideration.
 
 Sincerely,
 
-Boggavarapu Kiran (corresponding author), on behalf of the authors
+Boggavarapu Kiran (corresponding author)
 Department of Chemistry and Physics
 McNeese State University
 Lake Charles, LA 70609, USA

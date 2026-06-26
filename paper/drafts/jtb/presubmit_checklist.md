@@ -5,7 +5,7 @@ Each item is either [verify], [confirm], or [paste/upload].
 
 ## Authorship and identity
 
-- [ ] **DECIDE: sole author or two authors?** The JTB tex has Sreedhar + Boggavarapu (matches the spec). The PRX/bioRxiv path used sole-author. Pick one and apply consistently to: manuscript title block, cover letter, CRediT, Zenodo data references, EM author list. **If switching to sole-author**, edit `jtb-mansucript.tex` line 87–88 to delete the `\author{Sreedhar Volet} \affiliation{Indras Bioinformatics, Hyderabad, India}` block, and remove "Volet, S." from `data_references_for_bib.bib`.
+- [x] **Authorship resolved 2026-06-26: sole author (Boggavarapu Kiran).** Applied to `jtb-mansucript.tex`, `manuscript-v18.tex`, `cover_letter_jtb.md`, `credit_contributions.md`, and `data_references_for_bib.bib`. The sole-author state is now consistent across the JTB, PRX/bioRxiv, and Zenodo tracks.
 - [ ] Corresponding author email confirmed in EM (`kiran@mcneese.edu`)
 - [ ] Corresponding author full postal address entered in EM
 - [ ] Corresponding author phone number entered in EM (required field; +1 area code + 10 digits)
