@@ -1,5 +1,29 @@
 # JTB submission package — verbatim spec (reference document)
 
+> **SUPERSEDED 2026-06-26 in part.** The spec below was the planning
+> document drafted on 2026-06-24 with placeholders for several pending
+> decisions. The resolved live state is now reflected in:
+>
+> - `README.md` (index + resolved-decision flags)
+> - `presubmit_checklist.md` (driver document for EM submission)
+> - the individual executable files (`cover_letter_jtb.md`,
+>   `credit_contributions.md`, `data_references_for_bib.bib`)
+>
+> Resolved decisions superseding spec defaults:
+>
+> | Spec item | Spec default | Resolved (2026-06-26) |
+> |---|---|---|
+> | Authorship | Two authors (Sreedhar + Boggavarapu) | **Sole author: Boggavarapu Kiran** |
+> | CRediT for Sreedhar | `[TO BE ASSIGNED]` | All roles attributed to the sole author |
+> | Zenodo data refs | `author = {Kiran, B. and Volet, S.}` | `author = {Kiran, B.}` |
+> | Cover-letter voice | "the authors" / "all authors approve" | Singular voice; "the author declares" |
+> | Manuscript SHA `073b99...` | (pre-sole-author state) | Post-edit SHA differs; see `presubmit_checklist.md` for the current state |
+>
+> This document is preserved verbatim below for audit-trail purposes;
+> do not consult it as the live submission driver.
+
+---
+
 This is the full submission spec as provided by the corresponding author on
 2026-06-24, preserved here as the authoritative reference for the other
 drafts in this directory. Each of the section-numbered items below has a
